@@ -63,7 +63,6 @@ pipeline {
             jenkinsUtils.setProperty("import-manager.properties", "application_path", "${APPLICATION_PATH}")
             sh "ls appian/applications/LMB_FF"
             
-
           	jenkinsUtils.importPackage("import-manager.test.properties", "${APPLICATIONNAME}.test.properties")
         	echo 'Deploy to Test'
         }
