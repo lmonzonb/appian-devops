@@ -25,7 +25,7 @@ pipeline {
         
         
         // URL of the Appian site
-        URL = "https://ps-sandbox1.appiancloud.com/suite"
+        APPIAN_SITE_URL = "https://ps-sandbox1.appiancloud.com/suite"
         // Appian Site User credentials
         APPIAN_SITE_CREDENTIALS = credentials('appian-credentials')
         // Username of the Appian user account
@@ -74,7 +74,7 @@ pipeline {
             // Copy the package that will be imported
             sh "cp appian/applications/${APPLICATIONNAME}/app-package.zip adm/app-package.zip"
             
-            jenkinsUtils.setProperty("adm/appian-import-client/import-manager.properties", "url", "true")
+            jenkinsUtils.setProperty("adm/appian-import-client/import-manager.properties", "url", ${APPIAN_SITE_URL})
             
           	jenkinsUtils.importPackage("import-manager.test.properties", "${APPLICATIONNAME}.test.properties")
         	echo 'Deploy to Test'
