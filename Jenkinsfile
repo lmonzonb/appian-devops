@@ -29,9 +29,9 @@ pipeline {
         // Appian Site User credentials
         APPIAN_SITE_CREDENTIALS = credentials('appian-credentials')
         // Username of the Appian user account
-        SITEUSERNAME = APPIAN_SITE_CREDENTIALS_USR
+        SITEUSERNAME = ${APPIAN_SITE_CREDENTIALS_USR}
         // Password of the Appian user account
-        SITEPASSWORD = APPIAN_SITE_CREDENTIALS_PSW
+        SITEPASSWORD = ${APPIAN_SITE_CREDENTIALS_PSW}
         
         
         
