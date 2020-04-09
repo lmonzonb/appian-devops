@@ -54,7 +54,17 @@ pipeline {
           sh "unzip adm/appian-adm-versioning*.zip -d adm/appian-version-client"
           jenkinsUtils.setProperty("adm/appian-version-client/metrics.properties", "pipelineUsage", "true")
 
-          
+          // Retrieve and setup F4A
+          jenkinsUtils.shNoTrace("curl --user ${NEXUS_CREDENTIALS} \"${NEXUS_PROTOCOL}://${NEXUS_URL}/repository/${NEXUS_ALM_REPOSITORY}/${NEXUS_ADM_PATH}\" --output ${ADM_FILENAME}")
+          sh "unzip f4a.zip -d f4a"
+          jenkinsUtils.setProperty("f4a/FitNesseForAppian/configs/metrics.properties", "pipeline.usage", "true")
+          sh "cp -a devops/f4a/test_suites/. f4a/FitNesseForAppian/FitNesseRoot/FitNesseForAppian/Examples/"
+          sh "cp devops/f4a/users.properties f4a/FitNesseForAppian/configs/users.properties"
+
+          // WebDriver Docker Container setup
+          sh "docker-compose -f docker/docker-compose.yml pull"
+          jenkinsUtils.setProperty("f4a/FitNesseForAppian/configs/custom.properties", "firefox.host.port", "4444")
+          jenkinsUtils.setProperty("f4a/FitNesseForAppian/configs/custom.properties", "chrome.host.port", "4445")
         }
       }
     }
