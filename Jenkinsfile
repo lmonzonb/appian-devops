@@ -20,6 +20,8 @@ pipeline {
         
         // Appian Application to deploy
         APPLICATIONNAME = "MyApplication"
+        // PATH of Appian Application to deploy
+        APPLICATION_PATH = "C:\Users\luis.monzon\Documents\Software\DevOps\Appian DevOps\scm\devops-quickstart\appian\applications\LMB_FF"
         
         // Username of the Appian user account
         SITEUSERNAME = "user"
@@ -56,6 +58,10 @@ pipeline {
       steps {
         script {
             def jenkinsUtils = load "groovy/JenkinsUtils.groovy"
+            
+            // JUST FOR TESTING PURPOSES
+            jenkinsUtils.setProperty("import-manager.properties", "application_path", "${APPLICATION_PATH}")
+            
           	jenkinsUtils.importPackage("import-manager.test.properties", "${APPLICATIONNAME}.test.properties")
         	echo 'Deploy to Test'
         }
