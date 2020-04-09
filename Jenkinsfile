@@ -62,7 +62,7 @@ pipeline {
           // Retrieve and setup F4A
           jenkinsUtils.shNoTrace("curl --user ${NEXUS_CREDENTIALS} \"${NEXUS_PROTOCOL}://${NEXUS_URL}/repository/${NEXUS_ALM_REPOSITORY}/${NEXUS_F4A_PATH}\" --output ${F4A_FILENAME}")
           sh "unzip f4a.zip -d f4a"
-          sh "unzip f4a/FitNesse Application*.zip -d f4a/FitNesseForAppian"
+          sh "unzip f4a/FitNesse*.zip -d f4a/FitNesseForAppian"
           jenkinsUtils.setProperty("f4a/FitNesseForAppian/configs/metrics.properties", "pipeline.usage", "true")
           sh "cp -a devops/f4a/test_suites/. f4a/FitNesseForAppian/FitNesseRoot/FitNesseForAppian/Examples/"
           sh "cp devops/f4a/users.properties f4a/FitNesseForAppian/configs/users.properties"
