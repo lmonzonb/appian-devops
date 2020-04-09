@@ -68,7 +68,7 @@ pipeline {
           sh "cp devops/f4a/users.properties f4a/FitNesseForAppian/configs/users.properties"
 
           // WebDriver Docker Container setup
-          sh "docker-compose -f docker/docker-compose.yml pull"
+          
           jenkinsUtils.setProperty("f4a/FitNesseForAppian/configs/custom.properties", "firefox.host.port", "4444")
           jenkinsUtils.setProperty("f4a/FitNesseForAppian/configs/custom.properties", "chrome.host.port", "4445")
         }
@@ -124,10 +124,23 @@ pipeline {
         }
       }
     }
-    stage("Run Acceptance Tests") {
+   stage("Run Acceptance Tests") {
       steps {
         script {
-          echo 'Run Acceptance Tests'
+          def jenkinsUtils = load "groovy/JenkinsUtils.groovy"
+          jenkinsUtils.runTestsDockerWithoutCompose("fitnesse-automation.acceptance.properties")
+        }
+      }
+      post {
+        always { 
+          sh script: "docker-compose -f docker/docker-compose.yml down", returnStatus: true
+          dir("f4a/FitNesseForAppian"){ junit "fitnesse-results.xml" }
+        }
+        failure {
+          script {
+            def jenkinsUtils = load "groovy/JenkinsUtils.groovy"
+            archiveArtifacts artifacts: jenkinsUtils.retrieveLogs("fitnesse-automation.acceptance.properties"), fingerprint: true
+          }
         }
       }
     }
