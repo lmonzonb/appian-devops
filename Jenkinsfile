@@ -28,19 +28,11 @@ pipeline {
         // Password of the Appian user account
         SITEPASSWORD = "pass"
     }
-    options {
-    skipDefaultCheckout true
-  }
-
+   
     
    
   stages {
-  	stage('clean_workspace_and_checkout_source') {
-      steps {
-        deleteDir()
-        checkout scm
-      }
-    }
+  
     stage("Install ADM and FitNesse for Appian") {
       steps {
         script {
