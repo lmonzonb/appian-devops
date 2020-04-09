@@ -134,4 +134,9 @@ pipeline {
       }
     }
   }
+  post { 
+        always { 
+            cleanWs()
+        }
+    }
 }
