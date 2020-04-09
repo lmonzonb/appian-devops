@@ -68,7 +68,7 @@ pipeline {
           sh "cp devops/f4a/users.properties f4a/FitNesseForAppian/configs/users.properties"
 
           // WebDriver Docker Container setup
-          docker pull selenium/standalone-firefox
+          sh "docker pull selenium/standalone-firefox"
           jenkinsUtils.setProperty("f4a/FitNesseForAppian/configs/custom.properties", "firefox.host.port", "4444")
           jenkinsUtils.setProperty("f4a/FitNesseForAppian/configs/custom.properties", "chrome.host.port", "4445")
         }
