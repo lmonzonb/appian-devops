@@ -23,10 +23,18 @@ pipeline {
         // PATH of Appian Application to deploy
         APPLICATION_PATH = "appian/applications/LMB_FF/app-package.zip"
         
+        
+        // URL of the Appian site
+        URL = "https://ps-sandbox1.appiancloud.com/suite"
+        // Appian Site User credentials
+        APPIAN_SITE_CREDENTIALS = credentials('appian-credentials')
         // Username of the Appian user account
-        SITEUSERNAME = "user"
+        SITEUSERNAME = APPIAN_SITE_CREDENTIALS_USR
         // Password of the Appian user account
-        SITEPASSWORD = "pass"
+        SITEPASSWORD = APPIAN_SITE_CREDENTIALS_PSW
+        
+        
+        
     }
    
     
@@ -65,6 +73,8 @@ pipeline {
             
             // Copy the package that will be imported
             sh "cp appian/applications/${APPLICATIONNAME}/app-package.zip adm/app-package.zip"
+            
+            jenkinsUtils.setProperty("adm/appian-import-client/import-manager.properties", "url", "true")
             
           	jenkinsUtils.importPackage("import-manager.test.properties", "${APPLICATIONNAME}.test.properties")
         	echo 'Deploy to Test'
