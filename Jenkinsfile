@@ -77,7 +77,20 @@ pipeline {
     stage("Build Application Package from Repo") {
       steps {
         script {
-          echo 'Build Application Package from Repo'
+          def jenkinsUtils = load "groovy/JenkinsUtils.groovy"
+          jenkinsUtils.runTestsDockerWithoutCompose("fitnesse-automation.acceptance.properties")
+        }
+      }
+      post {
+        always { 
+          sh script: "docker-compose -f docker/docker-compose.yml down", returnStatus: true
+          dir("f4a/FitNesseForAppian"){ junit "fitnesse-results.xml" }
+        }
+        failure {
+          script {
+            def jenkinsUtils = load "groovy/JenkinsUtils.groovy"
+            archiveArtifacts artifacts: jenkinsUtils.retrieveLogs("fitnesse-automation.acceptance.properties"), fingerprint: true
+          }
         }
       }
     }
@@ -104,22 +117,9 @@ pipeline {
       }
     }
     stage("Run Integration Tests") {
-     steps {
+      steps {
         script {
-          def jenkinsUtils = load "groovy/JenkinsUtils.groovy"
-          jenkinsUtils.runTestsDockerWithoutCompose("fitnesse-automation.acceptance.properties")
-        }
-      }
-      post {
-        always { 
-          sh script: "docker-compose -f docker/docker-compose.yml down", returnStatus: true
-          dir("f4a/FitNesseForAppian"){ junit "fitnesse-results.xml" }
-        }
-        failure {
-          script {
-            def jenkinsUtils = load "groovy/JenkinsUtils.groovy"
-            archiveArtifacts artifacts: jenkinsUtils.retrieveLogs("fitnesse-automation.acceptance.properties"), fingerprint: true
-          }
+          echo 'Run Integration Tests'
         }
       }
     }
