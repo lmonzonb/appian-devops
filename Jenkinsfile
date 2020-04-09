@@ -20,6 +20,11 @@ pipeline {
         
         // Appian Application to deploy
         APPLICATIONNAME = "MyApplication"
+        
+        // Username of the Appian user account
+        SITEUSERNAME = "user"
+        // Password of the Appian user account
+        SITEPASSWORD = "pass"
     }
   stages {
     stage("Install ADM and FitNesse for Appian") {
