@@ -1,5 +1,23 @@
 pipeline {
   agent any
+  environment {
+        // This can be nexus3 or nexus2
+        NEXUS_VERSION = "nexus3"
+        // This can be http or https
+        NEXUS_PROTOCOL = "http"
+        // Where your Nexus is running
+        NEXUS_URL = "nexus-local:8081"
+        // Repository where Appian applications are uploaded
+        NEXUS_REPOSITORY = "appian-repository"
+        // Repository where ALM tools are hosted
+        NEXUS_ALM_REPOSITORY = "appian-alm-repository"
+        // Jenkins credential id to authenticate to Nexus OSS
+        NEXUS_CREDENTIALS = credentials('nexus-credentials')
+        // Appian ADM file path in Nexus
+        NEXUS_ADM_PATH = "appian-devops/adm.zip"
+        // Appian ADM file name
+        ADM_FILENAME = "adm.zip"
+    }
   stages {
     stage("Install ADM and FitNesse for Appian") {
       steps {
@@ -8,112 +26,70 @@ pipeline {
 
           // Retrieve and setup ADM
           sh "rm -rf adm f4a"
-          jenkinsUtils.shNoTrace("curl -H X-JFrog-Art-Api:$ARTIFACTORYAPIKEY -O $ARTIFACTORYURL/appian-devops/adm.zip")
+          jenkinsUtils.shNoTrace("curl --user ${NEXUS_CREDENTIALS} \"${NEXUS_PROTOCOL}://${NEXUS_URL}/repository/${NEXUS_ALM_REPOSITORY}/${NEXUS_ADM_PATH}\" --output ${ADM_FILENAME}")
           sh "unzip adm.zip -d adm"
           sh "unzip adm/appian-adm-import*.zip -d adm/appian-import-client"
           jenkinsUtils.setProperty("adm/appian-import-client/metrics.properties", "pipelineUsage", "true")
           sh "unzip adm/appian-adm-versioning*.zip -d adm/appian-version-client"
           jenkinsUtils.setProperty("adm/appian-version-client/metrics.properties", "pipelineUsage", "true")
 
-          // Retrieve and setup F4A
-          jenkinsUtils.shNoTrace("curl -H X-JFrog-Art-Api:$ARTIFACTORYAPIKEY -O $ARTIFACTORYURL/appian-devops/f4a.zip")
-          sh "unzip f4a.zip -d f4a"
-          jenkinsUtils.setProperty("f4a/FitNesseForAppian/configs/metrics.properties", "pipeline.usage", "true")
-          sh "cp -a devops/f4a/test_suites/. f4a/FitNesseForAppian/FitNesseRoot/FitNesseForAppian/Examples/"
-          sh "cp devops/f4a/users.properties f4a/FitNesseForAppian/configs/users.properties"
-
-          // WebDriver Docker Container setup
-          sh "docker-compose -f docker/docker-compose.yml pull"
-          jenkinsUtils.setProperty("f4a/FitNesseForAppian/configs/custom.properties", "firefox.host.port", "4444")
-          jenkinsUtils.setProperty("f4a/FitNesseForAppian/configs/custom.properties", "chrome.host.port", "4445")
+          
         }
       }
     }
     stage("Build Application Package from Repo") {
       steps {
         script {
-          def jenkinsUtils = load "groovy/JenkinsUtils.groovy"
-          jenkinsUtils.buildPackage("version-manager.properties")
+          echo 'Build Application Package from Repo'
         }
       }
     }
     stage("Deploy to Test") {
       steps {
         script {
-          def jenkinsUtils = load "groovy/JenkinsUtils.groovy"
-          jenkinsUtils.importPackage("import-manager.test.properties", "${APPLICATIONNAME}.test.properties")
+        	echo 'Deploy to Test'
         }
       }
     }
     stage("Tag Successful Import into Test") {
       steps {
         script {
-          def githubUtils = load "groovy/GitHubUtils.groovy"
-          githubUtils.tagSuccessfulImport("TEST")
+          echo 'Tag Successful Import into Test'
         }
       }
     }
     stage("Run Integration Tests") {
       steps {
         script {
-          def jenkinsUtils = load "groovy/JenkinsUtils.groovy"
-          jenkinsUtils.runTestsDocker("fitnesse-automation.integrate.properties")
-        }
-      }
-      post {
-        always {
-          sh script: "docker-compose -f docker/docker-compose.yml down", returnStatus: true
-          dir("f4a/FitNesseForAppian"){ junit "fitnesse-results.xml" }
-        }
-        failure {
-          script {
-            def jenkinsUtils = load "groovy/JenkinsUtils.groovy"
-            archiveArtifacts artifacts: jenkinsUtils.retrieveLogs("fitnesse-automation.integrate.properties"), fingerprint: true
-          }
+          echo 'Run Integration Tests'
         }
       }
     }
     stage("Deploy to Staging") {
       steps {
         script {
-          def jenkinsUtils = load "groovy/JenkinsUtils.groovy"
-          jenkinsUtils.importPackage("import-manager.stag.properties", "${APPLICATIONNAME}.stag.properties")
+          echo 'Deploy to Staging'
         }
       }
     }
     stage("Tag Successful Import into Staging") {
       steps {
         script {
-          def githubUtils = load "groovy/GitHubUtils.groovy"
-          githubUtils.tagSuccessfulImport("STAG")
+          echo 'Tag Successful Import into Staging'
         }
       }
     }
     stage("Run Acceptance Tests") {
       steps {
         script {
-          def jenkinsUtils = load "groovy/JenkinsUtils.groovy"
-          jenkinsUtils.runTestsDocker("fitnesse-automation.acceptance.properties")
-        }
-      }
-      post {
-        always { 
-          sh script: "docker-compose -f docker/docker-compose.yml down", returnStatus: true
-          dir("f4a/FitNesseForAppian"){ junit "fitnesse-results.xml" }
-        }
-        failure {
-          script {
-            def jenkinsUtils = load "groovy/JenkinsUtils.groovy"
-            archiveArtifacts artifacts: jenkinsUtils.retrieveLogs("fitnesse-automation.acceptance.properties"), fingerprint: true
-          }
+          echo 'Run Acceptance Tests'
         }
       }
     }
     stage("Create Application Release") {
       steps {
         script {
-          def githubUtils = load "groovy/GitHubUtils.groovy"
-          githubUtils.releaseApplication("RELEASE", "${APPLICATIONNAME}.properties")
+          echo 'Create Application Release'
         }
       }
     }
@@ -125,16 +101,14 @@ pipeline {
     stage("Deploy to Production") {
       steps {
         script {
-          def jenkinsUtils = load "groovy/JenkinsUtils.groovy"
-          jenkinsUtils.importPackage("import-manager.prod.properties", "${APPLICATIONNAME}.prod.properties")
+          echo 'Create Application Release'
         }
       }
     }
     stage("Tag Successful Import into Production") {
       steps {
         script {
-          def githubUtils = load "groovy/GitHubUtils.groovy"
-          githubUtils.tagSuccessfulImport("PROD")
+          echo 'Tag Successful Import into Production'
         }
       }
     }
