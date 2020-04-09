@@ -32,7 +32,7 @@ void runTestsDockerWithoutCompose(propertyFile) {
   timeout(2) { //timeout is in minutes
     waitUntil {
       def numExpectedContainers = "1"
-      def runningContainers = sh script: "docker ps --format {{.Names}} | grep \"fitnesse-firefox\" | wc -l", returnStdout: true
+      def runningContainers = sh script: "docker ps | grep \"fitnesse-firefox\" | wc -l", returnStdout: true
       runningContainers = runningContainers.trim()
       return (runningContainers == numExpectedContainers)
     }
