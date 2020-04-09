@@ -26,8 +26,7 @@ pipeline {
         
         // URL of the Appian site
         APPIAN_SITE_URL = "https://ps-sandbox1.appiancloud.com/suite"
-        // Appian Site User credentials
-        APPIAN_SITE_CREDENTIALS = credentials('appian-credentials')
+       
         // Username of the Appian user account
         SITEUSERNAME = "luis.monzon"
         // Password of the Appian user account
