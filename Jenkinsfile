@@ -64,7 +64,7 @@ pipeline {
             def jenkinsUtils = load "groovy/JenkinsUtils.groovy"
             
             // JUST FOR TESTING PURPOSES
-            jenkinsUtils.setProperty("import-manager.properties", "application_path", "${APPLICATION_PATH}")
+            jenkinsUtils.setProperty("adm/appian-import-client/import-manager.properties", "application_path", "${APPLICATION_PATH}")
             sh "ls appian/applications/LMB_FF"
             
           	jenkinsUtils.importPackage("import-manager.test.properties", "${APPLICATIONNAME}.test.properties")
