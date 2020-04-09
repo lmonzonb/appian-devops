@@ -31,8 +31,8 @@ void runTestsDockerWithoutCompose(propertyFile) {
   sh "docker run -d -p 4444:4444 --name fitnesse-firefox -v /dev/shm:/dev/shm selenium/standalone-firefox &"
   timeout(2) { //timeout is in minutes
     waitUntil {
-      def numExpectedContainers = "2"
-      def runningContainers = sh script: "docker ps --format {{.Names}} | grep \"fitnesse-\\(chrome\\|firefox\\)\" | wc -l", returnStdout: true
+      def numExpectedContainers = "1"
+      def runningContainers = sh script: "docker ps --format {{.Names}} | grep \"fitnesse-firefox\" | wc -l", returnStdout: true
       runningContainers = runningContainers.trim()
       return (runningContainers == numExpectedContainers)
     }

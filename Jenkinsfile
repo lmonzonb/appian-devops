@@ -83,7 +83,7 @@ pipeline {
       }
       post {
         always { 
-          sh script: "docker-compose -f docker/docker-compose.yml down", returnStatus: true
+          sh script: "docker stop fitnesse-firefox", returnStatus: true
           dir("f4a/FitNesseForAppian"){ junit "fitnesse-results.xml" }
         }
         failure {
