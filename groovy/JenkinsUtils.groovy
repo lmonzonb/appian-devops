@@ -54,7 +54,7 @@ void importPackage(importPropertyFile, customProperties) {
     if (fileExists("../../appian/properties/${APPLICATIONNAME}/" + customProperties)) {
       setProperty("import-manager.properties", "importCustomizationPath", "../../appian/properties/${APPLICATIONNAME}/" + customProperties)
     }
-    #sh "./deploy-application.sh -application_path ../app-package.zip"
+   
 	sh "./deploy-application.sh"
   }
 }
