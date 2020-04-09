@@ -21,7 +21,7 @@ pipeline {
         // Appian Application to deploy
         APPLICATIONNAME = "MyApplication"
         // PATH of Appian Application to deploy
-        APPLICATION_PATH = "C:\Users\luis.monzon\Documents\Software\DevOps\Appian DevOps\scm\devops-quickstart\appian\applications\LMB_FF"
+        APPLICATION_PATH = "C:\\Users\\luis.monzon\\Documents\\Software\\DevOps\\Appian DevOps\\scm\\devops-quickstart\\appian\\applications\\LMB_FF"
         
         // Username of the Appian user account
         SITEUSERNAME = "user"
