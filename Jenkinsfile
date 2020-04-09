@@ -40,6 +40,7 @@ pipeline {
         deleteDir()
         checkout scm
       }
+    }
     stage("Install ADM and FitNesse for Appian") {
       steps {
         script {
