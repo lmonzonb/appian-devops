@@ -28,7 +28,7 @@ void runTestsDocker(propertyFile) {
 
 void runTestsDockerWithoutCompose(propertyFile) {
   sh "cp devops/f4a/" + propertyFile + " f4a/FitNesseForAppian/fitnesse-automation.properties"
-  sh "docker run -d -p 4444:4444 --name fitnesse-firefox --shm-size 2g selenium/standalone-firefox:3.141.59-20200409 &"
+  sh "docker run -d -p 4444:4444 --name fitnesse-firefox -v /dev/shm:/dev/shm selenium/standalone-firefox &"
   timeout(2) { //timeout is in minutes
     waitUntil {
       def numExpectedContainers = "2"
