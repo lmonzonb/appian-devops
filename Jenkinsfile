@@ -18,6 +18,11 @@ pipeline {
         // Appian ADM file name
         ADM_FILENAME = "adm.zip"
         
+        // Appian F4A file path in Nexus
+        NEXUS_ADM_PATH = "appian-devops/f4a.zip"
+        // Appian F4A file name
+        F4A_FILENAME = "f4a.zip"
+        
         // Appian Application to deploy
         APPLICATIONNAME = "LMB_FF"
         // PATH of Appian Application to deploy
@@ -55,7 +60,7 @@ pipeline {
           jenkinsUtils.setProperty("adm/appian-version-client/metrics.properties", "pipelineUsage", "true")
 
           // Retrieve and setup F4A
-          jenkinsUtils.shNoTrace("curl --user ${NEXUS_CREDENTIALS} \"${NEXUS_PROTOCOL}://${NEXUS_URL}/repository/${NEXUS_ALM_REPOSITORY}/${NEXUS_ADM_PATH}\" --output ${ADM_FILENAME}")
+          jenkinsUtils.shNoTrace("curl --user ${NEXUS_CREDENTIALS} \"${NEXUS_PROTOCOL}://${NEXUS_URL}/repository/${NEXUS_ALM_REPOSITORY}/${NEXUS_F4A_PATH}\" --output ${F4A_FILENAME}")
           sh "unzip f4a.zip -d f4a"
           jenkinsUtils.setProperty("f4a/FitNesseForAppian/configs/metrics.properties", "pipeline.usage", "true")
           sh "cp -a devops/f4a/test_suites/. f4a/FitNesseForAppian/FitNesseRoot/FitNesseForAppian/Examples/"
