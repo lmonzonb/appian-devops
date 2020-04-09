@@ -19,7 +19,7 @@ pipeline {
         ADM_FILENAME = "adm.zip"
         
         // Appian Application to deploy
-        APPLICATIONNAME = "MyApplication"
+        APPLICATIONNAME = "LMB_FF"
         // PATH of Appian Application to deploy
         APPLICATION_PATH = "C:\\Users\\luis.monzon\\Documents\\Software\\DevOps\\Appian DevOps\\scm\\devops-quickstart\\appian\\applications\\LMB_FF"
         
