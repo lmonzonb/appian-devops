@@ -62,6 +62,9 @@ pipeline {
             // JUST FOR TESTING PURPOSES
             //jenkinsUtils.setProperty("import-manager.properties", "application_path", "${APPLICATION_PATH}")
             echo "Script executed from: ${PWD}"
+            BASEDIR=$(dirname $0)
+			echo "Script location: ${BASEDIR}"
+
           	jenkinsUtils.importPackage("import-manager.test.properties", "${APPLICATIONNAME}.test.properties")
         	echo 'Deploy to Test'
         }
