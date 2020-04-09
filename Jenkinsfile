@@ -19,7 +19,7 @@ pipeline {
         ADM_FILENAME = "adm.zip"
         
         // Appian F4A file path in Nexus
-        NEXUS_ADM_PATH = "appian-devops/f4a.zip"
+        NEXUS_F4A_PATH = "appian-devops/f4a.zip"
         // Appian F4A file name
         F4A_FILENAME = "f4a.zip"
         
