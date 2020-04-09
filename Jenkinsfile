@@ -17,6 +17,9 @@ pipeline {
         NEXUS_ADM_PATH = "appian-devops/adm.zip"
         // Appian ADM file name
         ADM_FILENAME = "adm.zip"
+        
+        // Appian Application to deploy
+        APPLICATIONNAME = "MyApplication"
     }
   stages {
     stage("Install ADM and FitNesse for Appian") {
@@ -47,6 +50,8 @@ pipeline {
     stage("Deploy to Test") {
       steps {
         script {
+            def jenkinsUtils = load "groovy/JenkinsUtils.groovy"
+          	jenkinsUtils.importPackage("import-manager.test.properties", "${APPLICATIONNAME}.test.properties")
         	echo 'Deploy to Test'
         }
       }
