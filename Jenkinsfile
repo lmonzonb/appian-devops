@@ -89,7 +89,7 @@ pipeline {
             steps {
                 script {
                     // Run gradle build
-                    sh "gradle clean -b rule_testing/build.gradle"
+                    sh "gradle clean -b devops/rule_testing/build.gradle"
                 }
             }
         }
