@@ -1,5 +1,9 @@
 pipeline {
   agent any
+  tools {
+        // Note: this should match with the tool name configured in your jenkins instance (JENKINS_URL/configureTools/)
+        gradle "Gradle 6.3"
+    }
   environment {
         // This can be nexus3 or nexus2
         NEXUS_VERSION = "nexus3"
@@ -77,23 +81,18 @@ pipeline {
     stage("Build Application Package from Repo") {
       steps {
         script {
-          def jenkinsUtils = load "groovy/JenkinsUtils.groovy"
-          jenkinsUtils.runTestsDockerWithoutCompose("fitnesse-automation.acceptance.properties")
-        }
-      }
-      post {
-        always { 
-          sh script: "docker stop fitnesse-firefox", returnStatus: true
-          dir("f4a/FitNesseForAppian"){ junit "fitnesse-results.xml" }
-        }
-        failure {
-          script {
-            def jenkinsUtils = load "groovy/JenkinsUtils.groovy"
-            archiveArtifacts artifacts: jenkinsUtils.retrieveLogs("fitnesse-automation.acceptance.properties"), fingerprint: true
-          }
+          echo 'Build Application Package from Repo'
         }
       }
     }
+    stage("Gradle Build") {
+            steps {
+                script {
+                    // Run gradle build
+                    sh "gradle clean -b rule_testing/build.gradle"
+                }
+            }
+        }
     stage("Deploy to Test") {
       steps {
         script {
@@ -138,7 +137,7 @@ pipeline {
       }
     }
    stage("Run Acceptance Tests") {
-      steps {
+     steps {
         script {
           def jenkinsUtils = load "groovy/JenkinsUtils.groovy"
           jenkinsUtils.runTestsDockerWithoutCompose("fitnesse-automation.acceptance.properties")
@@ -146,7 +145,7 @@ pipeline {
       }
       post {
         always { 
-          sh script: "docker-compose -f docker/docker-compose.yml down", returnStatus: true
+          sh script: "docker rm fitnesse-firefox", returnStatus: true
           dir("f4a/FitNesseForAppian"){ junit "fitnesse-results.xml" }
         }
         failure {
