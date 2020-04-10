@@ -40,6 +40,8 @@ pipeline {
         SITEUSERNAME = "luis.monzon"
         // Password of the Appian user account
         SITEPASSWORD = "pass"
+        // Base64 Encoded Password of the Appian user account
+        SITEPASSWORD_ENCODED = "pass"
         
         
         
@@ -89,9 +91,14 @@ pipeline {
             steps {
                 script {
                     // Run gradle build
-                    sh "gradle build -b devops/rule_testing/build.gradle runApplicationTest -PsiteUrl=${APPIAN_SITE_URL} -PappianUserName=myUser -PappianPasswordEncoded=myPassword"
+                    sh "gradle build -b devops/rule_testing/build.gradle runApplicationTest -PsiteUrl=${APPIAN_SITE_URL} -PappianUserName=${SITEUSERNAME} -PappianPasswordEncoded=${SITEPASSWORD_ENCODED}"
                 }
             }
+            post {
+        		always {
+            		junit 'devops/rule_testing/reports/**/*.xml'
+        }
+    }
         }
     stage("Deploy to Test") {
       steps {
