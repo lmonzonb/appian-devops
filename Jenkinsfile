@@ -89,7 +89,7 @@ pipeline {
             steps {
                 script {
                     // Run gradle build
-                    sh "gradle clean -b devops/rule_testing/build.gradle runApplicationTest -PsiteUrl=${APPIAN_SITE_URL}"
+                    sh "gradle build -b devops/rule_testing/build.gradle runApplicationTest -PsiteUrl=${APPIAN_SITE_URL}"
                 }
             }
         }
