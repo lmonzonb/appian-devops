@@ -28,9 +28,9 @@ pipeline {
         F4A_FILENAME = "f4a.zip"
         
         // Appian Application to deploy
-        APPLICATIONNAME = "LMB_FF"
+        APPLICATIONNAME = "LMB_AD"
         // PATH of Appian Application to deploy
-        APPLICATION_PATH = "appian/applications/LMB_FF/app-package.zip"
+        APPLICATION_PATH = "appian/applications/LMB_AD/app-package.zip"
         
         
         // URL of the Appian site
