@@ -34,8 +34,10 @@ pipeline {
         
         
         // URL of the Appian site
-        APPIAN_SITE_URL = "https://ps-sandbox1.appiancloud.com/suite"
+        APPIAN_SITE_URL = "http://appian-lab.appiancorp.com:8080/suite"
        
+       // Appian site credentials
+       APPIAN_CREDENTIALS = credentials('appian-credentials')
         // Username of the Appian user account
         SITEUSERNAME = "luis.monzon"
         // Password of the Appian user account
@@ -51,6 +53,21 @@ pipeline {
    
   stages {
   
+  stage("Deploy to Test") {
+      steps {
+        script {
+            def jenkinsUtils = load "groovy/JenkinsUtils.groovy"
+            
+            // Copy the package that will be imported
+            sh "cp appian/applications/${APPLICATIONNAME}/app-package.zip adm/app-package.zip"
+            
+            jenkinsUtils.setProperty("adm/appian-import-client/import-manager.properties", "url", "${APPIAN_SITE_URL}")
+            
+          	jenkinsUtils.importPackage("import-manager.test.properties", "${APPLICATIONNAME}.test.properties")
+        	echo 'Deploy to Test'
+        }
+      }
+    }
     stage("Install ADM and FitNesse for Appian") {
       steps {
         script {
@@ -87,34 +104,8 @@ pipeline {
         }
       }
     }
-    stage("Gradle Build") {
-            steps {
-                script {
-                    // Run gradle build
-                    sh "gradle build -b devops/rule_testing/build.gradle runApplicationTest -PsiteUrl=${APPIAN_SITE_URL} -PappianUserName=${SITEUSERNAME} -PappianPasswordEncoded=${SITEPASSWORD_ENCODED}"
-                }
-            }
-            post {
-        		always {
-            		junit 'devops/rule_testing/reports/**/*.xml'
-        }
-    }
-        }
-    stage("Deploy to Test") {
-      steps {
-        script {
-            def jenkinsUtils = load "groovy/JenkinsUtils.groovy"
-            
-            // Copy the package that will be imported
-            sh "cp appian/applications/${APPLICATIONNAME}/app-package.zip adm/app-package.zip"
-            
-            jenkinsUtils.setProperty("adm/appian-import-client/import-manager.properties", "url", "${APPIAN_SITE_URL}")
-            
-          	jenkinsUtils.importPackage("import-manager.test.properties", "${APPLICATIONNAME}.test.properties")
-        	echo 'Deploy to Test'
-        }
-      }
-    }
+    
+    
     stage("Tag Successful Import into Test") {
       steps {
         script {
@@ -129,6 +120,19 @@ pipeline {
         }
       }
     }
+    stage("Run Appian Rule Tests") {
+            steps {
+                script {
+                    // Run gradle build to execute the Appian rule tests
+                    sh "gradle build -b devops/rule_testing/build.gradle runApplicationTest -PsiteUrl=${APPIAN_SITE_URL} -PappianUserName=${SITEUSERNAME} -PappianPasswordEncoded=${SITEPASSWORD_ENCODED}"
+                }
+            }
+            post {
+        		always {
+            		junit 'devops/rule_testing/reports/**/*.xml'
+        }
+    }
+        }
     stage("Deploy to Staging") {
       steps {
         script {

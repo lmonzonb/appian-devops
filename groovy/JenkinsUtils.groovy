@@ -66,8 +66,8 @@ void buildPackage(versionPropertyFile) {
 void importPackage(importPropertyFile, customProperties) {
   sh "cp devops/adm/" + importPropertyFile + " adm/appian-import-client/import-manager.properties"
   dir("adm/appian-import-client") {
-    setProperty("import-manager.properties", "username", "${SITEUSERNAME}")
-    setProperty("import-manager.properties", "password", "${SITEPASSWORD}")
+    setProperty("import-manager.properties", "username", "${APPIAN_CREDENTIALS_USR}")
+    setProperty("import-manager.properties", "password", "${APPIAN_CREDENTIALS_PSW}")
     if (fileExists("../../appian/properties/${APPLICATIONNAME}/" + customProperties)) {
       setProperty("import-manager.properties", "importCustomizationPath", "../../appian/properties/${APPLICATIONNAME}/" + customProperties)
     }
