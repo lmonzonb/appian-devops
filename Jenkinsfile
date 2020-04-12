@@ -123,7 +123,7 @@ pipeline {
             steps {
                 script {
                     // Run gradle build to execute the Appian rule tests
-                    sh "gradle build -b devops/rule_testing/build.gradle runApplicationTest -PsiteUrl=${APPIAN_SITE_URL} -PappianUserName=${APPIAN_CREDENTIALS_USR} -PappianPasswordEncoded=${APPIAN_CREDENTIALS_PSW}"
+                    sh "gradle build -b devops/rule_testing/build.gradle runApplicationTest -PsiteUrl=${APPIAN_SITE_URL} -PappianUserName=${APPIAN_CREDENTIALS_USR} -PappianPasswordEncoded=${APPIAN_CREDENTIALS_PSW} --stacktrace --debug"
                 }
             }
             post {
