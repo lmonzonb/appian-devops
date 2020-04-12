@@ -38,7 +38,7 @@ pipeline {
         
        
        // Appian site credentials
-       APPIAN_CREDENTIALS = credentials('nexus-credentials')
+       APPIAN_CREDENTIALS = credentials('appian-credentials')
        
         SITEPASSWORD_ENCODED = "pass"
         
@@ -50,21 +50,7 @@ pipeline {
    
   stages {
   
-  stage("Deploy to Test") {
-      steps {
-        script {
-            def jenkinsUtils = load "groovy/JenkinsUtils.groovy"
-            
-            // Copy the package that will be imported
-            sh "cp appian/applications/${APPLICATIONNAME}/app-package.zip adm/app-package.zip"
-            
-            jenkinsUtils.setProperty("adm/appian-import-client/import-manager.properties", "url", "${APPIAN_SITE_URL}")
-            
-          	jenkinsUtils.importPackage("import-manager.test.properties", "${APPLICATIONNAME}.test.properties")
-        	echo 'Deploy to Test'
-        }
-      }
-    }
+  
     stage("Install ADM and FitNesse for Appian") {
       steps {
         script {
@@ -101,7 +87,21 @@ pipeline {
         }
       }
     }
-    
+    stage("Deploy to Test") {
+      steps {
+        script {
+            def jenkinsUtils = load "groovy/JenkinsUtils.groovy"
+            
+            // Copy the package that will be imported
+            sh "cp appian/applications/${APPLICATIONNAME}/app-package.zip adm/app-package.zip"
+            
+            jenkinsUtils.setProperty("adm/appian-import-client/import-manager.properties", "url", "${APPIAN_SITE_URL}")
+            
+          	jenkinsUtils.importPackage("import-manager.test.properties", "${APPLICATIONNAME}.test.properties")
+        	echo 'Deploy to Test'
+        }
+      }
+    }
     
     stage("Tag Successful Import into Test") {
       steps {
