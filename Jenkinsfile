@@ -35,9 +35,10 @@ pipeline {
         
         // URL of the Appian site
         APPIAN_SITE_URL = "http://appian-lab.appiancorp.com:8080/suite"
+        
        
        // Appian site credentials
-       APPIAN_CREDENTIALS = credentials('appian-credentials')
+       APPIAN_CREDENTIALS = credentials('appian_credentials')
         // Username of the Appian user account
         SITEUSERNAME = "luis.monzon"
         // Password of the Appian user account
