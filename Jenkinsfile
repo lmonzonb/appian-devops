@@ -133,6 +133,7 @@ pipeline {
     }
         }
    }
+   }
     stage("Deploy to Staging") {
       steps {
         script {
