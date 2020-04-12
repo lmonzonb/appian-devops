@@ -110,6 +110,8 @@ pipeline {
         }
       }
     }
+    stage('Run Tests') {
+            parallel {
     stage("Run Integration Tests") {
       steps {
         script {
@@ -130,6 +132,7 @@ pipeline {
         }
     }
         }
+   }
     stage("Deploy to Staging") {
       steps {
         script {
