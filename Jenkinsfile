@@ -40,11 +40,6 @@ pipeline {
        // Appian site credentials
        APPIAN_CREDENTIALS = credentials('appian_credentials')
        
-        // Username of the Appian user account
-        SITEUSERNAME = "luis.monzon"
-        // Password of the Appian user account
-        SITEPASSWORD = "pass"
-        // Base64 Encoded Password of the Appian user account
         SITEPASSWORD_ENCODED = "pass"
         
         
