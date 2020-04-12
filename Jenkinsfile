@@ -38,7 +38,7 @@ pipeline {
         
        
        // Appian site credentials
-       APPIAN_CREDENTIALS = credentials('appian_credentials')
+       APPIAN_CREDENTIALS = credentials('nexus-credentials')
        
         SITEPASSWORD_ENCODED = "pass"
         
