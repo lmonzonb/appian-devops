@@ -29,6 +29,9 @@ buildscript {
      //def appianPassword = new String(appianPasswordEncoded.decodeBase64())
      // The URL passed in by Jenkins
      def baseURL = "$siteUrl"
+     
+     // The path to the test results file
+     def testResultsFilePath = new String(testResultsPath)
 
      def startAppURL = "/suite/webapi/startRuleTestsApplications"
      def testStatusURL = "/suite/webapi/testRunStatusForId"
@@ -70,7 +73,7 @@ buildscript {
        def transformer = TransformerFactory.newInstance().newTransformer(new StreamSource(new StringReader(xslt)))
 
        // Set output file
-       def finalXML = new FileOutputStream("devops/rule_testing/reports/testResult" + System.currentTimeMillis() + ".xml")
+       def finalXML = new FileOutputStream(testResultsFilePath + "/testResult" + System.currentTimeMillis() + ".xml")
 
        // Perform transformation
        transformer.transform(new StreamSource(new StringReader(testRunResults)), new StreamResult(finalXML))
