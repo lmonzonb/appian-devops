@@ -40,9 +40,7 @@ buildscript {
          httpRequest.addHeader('Authorization',
              'Basic ' + (appianUserName + ':'
      +appianPassword).bytes.encodeBase64().toString())
-	 println "Authorization header added - " + (appianUserName + ':'
-     +appianPassword).bytes.encodeBase64().toString()
-     
+	      
        }
      })
 
@@ -72,7 +70,7 @@ buildscript {
        def transformer = TransformerFactory.newInstance().newTransformer(new StreamSource(new StringReader(xslt)))
 
        // Set output file
-       def finalXML = new FileOutputStream("testResult" + System.currentTimeMillis() + ".xml")
+       def finalXML = new FileOutputStream("devops/rule_testing/reports/testResult" + System.currentTimeMillis() + ".xml")
 
        // Perform transformation
        transformer.transform(new StreamSource(new StringReader(testRunResults)), new StreamResult(finalXML))
