@@ -25,7 +25,8 @@ buildscript {
 	doLast {
      // Define appianPasswordEncoded in gradle.properties 
      // as a base64-encoded string
-     def appianPassword = new String(appianPasswordEncoded.decodeBase64())
+     def appianPassword = new String(appianPasswordEncoded)
+     //def appianPassword = new String(appianPasswordEncoded.decodeBase64())
      // The URL passed in by Jenkins
      def baseURL = "$siteUrl"
 
