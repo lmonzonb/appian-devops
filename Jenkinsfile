@@ -86,7 +86,7 @@ pipeline {
           sh "unzip -o /var/tmp/gatling3/gatling-charts-highcharts-bundle-3.0.3-bundle.zip -d /var/tmp/gatling3"
           sh "export GATLING_HOME='/var/tmp/gatling3/gatling-charts-highcharts-bundle-3.0.3'"
           sh "export PATH=$PATH:/var/tmp/gatling3/gatling-charts-highcharts-bundle-3.0.3/bin"
-          
+          sh "printenv"
         }
       }
     }
