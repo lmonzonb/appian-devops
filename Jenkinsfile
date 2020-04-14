@@ -131,7 +131,7 @@ pipeline {
     }
     stage("Run Performance Tests") {
             steps {
-                sh "gatling.sh -rf . -rsf devops/perf_testing/ -sf devops/perf_testing/simulations/ -s Home_Page"
+                sh "$GATLING_HOME/bin/gatling.sh -rf . -rsf devops/perf_testing/ -sf devops/perf_testing/simulations/ -s Home_Page"
             }
             post {
                 always {
