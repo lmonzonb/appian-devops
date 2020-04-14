@@ -78,6 +78,14 @@ pipeline {
           sh "docker pull selenium/standalone-firefox"
           jenkinsUtils.setProperty("f4a/FitNesseForAppian/configs/custom.properties", "firefox.host.port", "4444")
           jenkinsUtils.setProperty("f4a/FitNesseForAppian/configs/custom.properties", "chrome.host.port", "4445")
+          
+          // Retrieve and setup Gatling
+          sh "mkdir /var/tmp/gatling3"
+          jenkinsUtils.shNoTrace("wget https://repo1.maven.org/maven2/io/gatling/highcharts/gatling-charts-highcharts-bundle/3.0.3/gatling-charts-highcharts-bundle-3.0.3-bundle.zip -P /var/tmp/gatling3")
+          sh "unzip -o /var/tmp/gatling3/gatling-charts-highcharts-bundle-3.0.3-bundle.zip -d /var/tmp/gatling3"
+          sh "export GATLING_HOME='/var/tmp/gatling3/gatling-charts-highcharts-bundle-3.0.3'"
+          sh "export PATH=$PATH:/var/tmp/gatling3/gatling-charts-highcharts-bundle-3.0.3/bin"
+          
         }
       }
     }
