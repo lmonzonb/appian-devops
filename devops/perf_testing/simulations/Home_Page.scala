@@ -1,83 +1,13 @@
-buildscript {
-    repositories {
-       jcenter()
+import scala.concurrent.duration._
+import io.gatling.core.Predef._
+import io.gatling.http.Predef._
+
+class Home_Page extends Simulation {
+  val scn = scenario("Home Page")
+    .during(1 minute){
+      exec(http("Home Page")
+        .get("http://localhost:8080/"))
+        .pause(5,10)
     }
-    dependencies {
-      classpath 'org.codehaus.groovy.modules.http-builder:http-builder:0.7.2'
-    }
- }
-
- import groovyx.net.http.RESTClient
- import groovyx.net.http.HTTPBuilder
- import groovyx.net.http.EncoderRegistry
- import static groovyx.net.http.ContentType.TEXT
- import static groovyx.net.http.ContentType.URLENC
- import org.apache.http.client.methods.HttpGet
- import org.apache.http.HttpRequestInterceptor
- import org.apache.http.protocol.HttpContext
- import org.apache.http.HttpRequest
- import org.apache.http.HttpResponse
- import javax.xml.transform.*
- import javax.xml.transform.stream.*
- import org.apache.commons.codec.binary.Base64
-
- task runApplicationTest {
-	doLast {
-     // Define appianPasswordEncoded in gradle.properties 
-     // as a base64-encoded string
-     def appianPassword = new String(appianPasswordEncoded)
-     //def appianPassword = new String(appianPasswordEncoded.decodeBase64())
-     // The URL passed in by Jenkins
-     def baseURL = "$siteUrl"
-     
-     // The path to the test results file
-     def testResultsFilePath = new String(testResultsPath)
-
-     def startAppURL = "/suite/webapi/startRuleTestsApplications"
-     def testStatusURL = "/suite/webapi/testRunStatusForId"
-     def fetchTestResultsURL =  "/suite/webapi/testRunResultForId"
-
-     def restClient = new RESTClient(baseURL)
-     restClient.client.addRequestInterceptor(new HttpRequestInterceptor() {
-       void process(HttpRequest httpRequest, HttpContext httpContext) {
-         httpRequest.addHeader('Authorization',
-             'Basic ' + (appianUserName + ':'
-     +appianPassword).bytes.encodeBase64().toString())
-	      
-       }
-     })
-
-
-     // --- Start Application Test ---
-     println "Start System Test"
-     def response = restClient.post(path: startAppURL)
-
-     if (response.status == 200) {
-       def testRunId = response.data.text
-       println "Test-run ID: " + testRunId
-
-       //--- Check test run status every minute ---
-       while(restClient.get(path: testStatusURL, query: [id:testRunId]).data.text == 'IN PROGRESS') {
-         sleep(60000)
-         println "Waiting for test results..."
-       }
-
-       // Fetch test results
-       response = restClient.get(path: fetchTestResultsURL, query: [id: testRunId])
-       def testRunResults = response.data.text
-
-       //get a reference to our xslt
-       def xslt= file("convertToJunit.xsl").text
-
-      // Create transformer
-       def transformer = TransformerFactory.newInstance().newTransformer(new StreamSource(new StringReader(xslt)))
-
-       // Set output file
-       def finalXML = new FileOutputStream(testResultsFilePath + "/testResult" + System.currentTimeMillis() + ".xml")
-
-       // Perform transformation
-       transformer.transform(new StreamSource(new StringReader(testRunResults)), new StreamResult(finalXML))
-     }
-     println "System Test Completed"
-	 }
- }
+  setUp(scn.inject(rampUsers(10) during(1 minutes)))
+}
