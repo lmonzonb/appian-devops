@@ -106,7 +106,7 @@ pipeline {
             
             jenkinsUtils.setProperty("adm/appian-import-client/import-manager.properties", "url", "${APPIAN_SITE_URL}")
             
-          	jenkinsUtils.importPackage("import-manager.test.properties", "${APPLICATIONNAME}.test.properties")
+          	//jenkinsUtils.importPackage("import-manager.test.properties", "${APPLICATIONNAME}.test.properties")
         	echo 'Deploy to Test'
         }
       }
@@ -127,6 +127,16 @@ pipeline {
           echo 'Run Integration Tests'
         }
       }
+    }
+    stage("Run Performance Tests") {
+            steps {
+                sh "gatling.sh -rf . -rsf devops/perf_testing/ -sf devops/perf_testing/simulations/ -s Home_Page"
+            }
+            post {
+                always {
+                    gatlingArchive()
+                }
+            }
     }
     stage("Run Appian Rule Tests") {
             steps {
