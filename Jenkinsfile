@@ -45,6 +45,7 @@ pipeline {
         // Rule Test Reports file path
         RULE_TEST_REPORTS_PATH = "devops/rule_testing/reports"
         
+        GATLING_HOME ="/var/tmp/gatling3/gatling-charts-highcharts-bundle-3.0.3"
     }
    
     
@@ -84,10 +85,10 @@ pipeline {
           sh "mkdir /var/tmp/gatling3"
           jenkinsUtils.shNoTrace("wget https://repo1.maven.org/maven2/io/gatling/highcharts/gatling-charts-highcharts-bundle/3.0.3/gatling-charts-highcharts-bundle-3.0.3-bundle.zip -P /var/tmp/gatling3")
           sh "unzip -o /var/tmp/gatling3/gatling-charts-highcharts-bundle-3.0.3-bundle.zip -d /var/tmp/gatling3"
-          sh "GATLING_HOME='/var/tmp/gatling3/gatling-charts-highcharts-bundle-3.0.3'"
-          sh "export GATLING_HOME"
-          sh "PATH=$PATH:/var/tmp/gatling3/gatling-charts-highcharts-bundle-3.0.3/bin"
-          sh "export PATH"
+          //sh "export GATLING_HOME='/var/tmp/gatling3/gatling-charts-highcharts-bundle-3.0.3'"
+         
+          sh "export PATH=$PATH:/var/tmp/gatling3/gatling-charts-highcharts-bundle-3.0.3/bin"
+          
           sh "printenv"
         }
       }
@@ -133,7 +134,7 @@ pipeline {
     }
     stage("Run Performance Tests") {
             steps {
-                sh "$GATLING_HOME/bin/gatling.sh -rf . -rsf devops/perf_testing/ -sf devops/perf_testing/simulations/ -s Home_Page"
+                sh "${GATLING_HOME}/bin/gatling.sh -rf . -rsf devops/perf_testing/ -sf devops/perf_testing/simulations/ -s Home_Page"
             }
             post {
                 always {
