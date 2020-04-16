@@ -105,7 +105,7 @@ pipeline {
             
             jenkinsUtils.setProperty("adm/appian-import-client/import-manager.properties", "url", "${APPIAN_SITE_URL}")
             
-          	//jenkinsUtils.importPackage("import-manager.test.properties", "${APPLICATIONNAME}.test.properties")
+          	jenkinsUtils.importPackage("import-manager.test.properties", "${APPLICATIONNAME}.test.properties")
         	echo 'Deploy to Test'
         }
       }
