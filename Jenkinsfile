@@ -48,13 +48,23 @@ pipeline {
         GATLING_HOME ="/var/tmp/gatling3/gatling-charts-highcharts-bundle-3.0.3"
         
         // SSH Docker
-        REMOTE_DOCKER_HOST = "host=ssh://appian@appian-1.appiancorp.com"
+        REMOTE_DOCKER_HOST = "ssh://appian@appian-1.appiancorp.com"
     }
    
     
    
   stages {
   
+  stage("Connect with remote docker host") {
+      steps {
+        script {
+          // Retrieve and setup ADM
+          sh "docker-compose -f /productos/appian-docker up -d"
+          
+          
+          }
+          }
+          }
   
     stage("Install ADM and FitNesse for Appian") {
       steps {
