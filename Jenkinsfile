@@ -2,7 +2,7 @@ pipeline {
   agent any
   tools {
         // Note: this should match with the tool name configured in your jenkins instance (JENKINS_URL/configureTools/)
-        gradle "Gradle 6.3"
+        gradle "Gradle 6.4"
     }
   environment {
         // This can be nexus3 or nexus2
