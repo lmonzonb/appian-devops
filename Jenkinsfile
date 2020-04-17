@@ -46,13 +46,25 @@ pipeline {
         RULE_TEST_REPORTS_PATH = "devops/rule_testing/reports"
         
         GATLING_HOME ="/var/tmp/gatling3/gatling-charts-highcharts-bundle-3.0.3"
+        
+        // SSH Docker
+        REMOTE_DOCKER_HOST = "host=ssh://user@remotemachine"
     }
    
     
    
   stages {
   
-  
+  stage("Install ADM and FitNesse for Appian") {
+      steps {
+        script {
+          // Retrieve and setup ADM
+          sh "docker context create remote ‐‐docker ${REMOTE_DOCKER_HOST}"
+          
+          
+          }
+          }
+          }
     stage("Install ADM and FitNesse for Appian") {
       steps {
         script {
@@ -100,7 +112,7 @@ pipeline {
         script {
             def jenkinsUtils = load "groovy/JenkinsUtils.groovy"
             
-            // Copy the package that will be imported
+            // Copy the package that will be imported - the package can also be downloaded from the artifact repository
             sh "cp appian/applications/${APPLICATIONNAME}/app-package.zip adm/app-package.zip"
             
             jenkinsUtils.setProperty("adm/appian-import-client/import-manager.properties", "url", "${APPIAN_SITE_URL}")
