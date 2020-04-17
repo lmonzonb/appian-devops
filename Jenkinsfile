@@ -55,16 +55,7 @@ pipeline {
    
   stages {
   
-  stage("Connect with remote docker host") {
-      steps {
-        script {
-          // Retrieve and setup ADM
-          sh "docker context use remote"
-          
-          
-          }
-          }
-          }
+  
     stage("Install ADM and FitNesse for Appian") {
       steps {
         script {
@@ -117,7 +108,7 @@ pipeline {
             
             jenkinsUtils.setProperty("adm/appian-import-client/import-manager.properties", "url", "${APPIAN_SITE_URL}")
             
-          	jenkinsUtils.importPackage("import-manager.test.properties", "${APPLICATIONNAME}.test.properties")
+          	//jenkinsUtils.importPackage("import-manager.test.properties", "${APPLICATIONNAME}.test.properties")
         	echo 'Deploy to Test'
         }
       }
