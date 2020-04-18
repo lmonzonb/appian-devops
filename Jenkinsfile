@@ -59,6 +59,8 @@ pipeline {
    
  stages {
   
+  stage ('Main Stage') {
+        steps {
   	script{
   	stage("Connect with remote docker host") {
       
@@ -75,7 +77,8 @@ pipeline {
           
           }
           }
-    
+    }
+    }
  	}
   
 }
