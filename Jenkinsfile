@@ -59,22 +59,20 @@ pipeline {
    
  stages {
   
-  	def remote = [:]
-    remote.name = 'appian'
+  	script{
+  	stage("Connect with remote docker host") {
+      
+        def remote = [:]
+    remote.name = 'appian-1'
     remote.host = 'appian-1.appiancorp.com'
     remote.user = ${REMOTE_DOCKER_HOST_CREDENTIALS_USR}
     remote.password = ${REMOTE_DOCKER_HOST_CREDENTIALS_PSW}
     remote.allowAnyHosts = true
   
-  	stage("Connect with remote docker host") {
-      steps {
-        script {
         sshCommand remote: remote, command: "ls -lrt"
           // Run docker-compose on remote host
           sh "docker-compose -f /productos/appian-docker up -d"
           
-          
-          }
           }
           }
     
