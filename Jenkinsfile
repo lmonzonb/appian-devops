@@ -25,7 +25,7 @@ pipeline {
   	stage("Connect with remote docker host") {
       
         def remote = [:]
-    remote.name = 'appian'
+    remote.name = 'appian-1'
     remote.host = 'appian-1.appiancorp.com'
     remote.user = '${REMOTE_DOCKER_HOST_CREDENTIALS_USR}'
     remote.password = '${REMOTE_DOCKER_HOST_CREDENTIALS_PSW}'
