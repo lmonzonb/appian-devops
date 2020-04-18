@@ -57,7 +57,7 @@ pipeline {
     
    
    
-  stages {
+ // stages {
   node {
   	def remote = [:]
     remote.name = 'appian'
@@ -80,6 +80,6 @@ pipeline {
          }
   
     
-  }
+  //}
   
 }
