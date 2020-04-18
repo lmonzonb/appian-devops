@@ -30,8 +30,11 @@ pipeline {
     remote.user = '${REMOTE_DOCKER_HOST_CREDENTIALS_USR}'
     remote.password = '${REMOTE_DOCKER_HOST_CREDENTIALS_PSW}'
     remote.allowAnyHosts = true
+    
+    echo remote.user
   
         sshCommand remote: remote, command: "ls -lrt"
+          
           // Run docker-compose on remote host
           sh "docker-compose -f /productos/appian-docker up -d"
           
