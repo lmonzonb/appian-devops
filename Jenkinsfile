@@ -57,8 +57,8 @@ pipeline {
     
    
    
- // stages {
-  node {
+ stages {
+  
   	def remote = [:]
     remote.name = 'appian'
     remote.host = 'appian-1.appiancorp.com'
@@ -77,9 +77,7 @@ pipeline {
           }
           }
           }
-         }
-  
     
-  //}
+ 	}
   
 }
