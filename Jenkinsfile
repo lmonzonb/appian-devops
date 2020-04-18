@@ -49,16 +49,27 @@ pipeline {
         
         // SSH Docker
         REMOTE_DOCKER_HOST = "ssh://appian@appian-1.appiancorp.com"
+        REMOTE_DOCKER_HOST_CREDENTIALS = credentials('ssh-credentials')
+        
     }
    
     
+    
+   
    
   stages {
+  	def remote = [:]
+    remote.name = 'appian'
+    remote.host = 'appian-1.appiancorp.com'
+    remote.user = ${REMOTE_DOCKER_HOST_CREDENTIALS_USR}
+    remote.password = ${REMOTE_DOCKER_HOST_CREDENTIALS_PSW}
+    remote.allowAnyHosts = true
   
-  stage("Connect with remote docker host") {
+  	stage("Connect with remote docker host") {
       steps {
         script {
-          // Retrieve and setup ADM
+        sshCommand remote: remote, command: "ls -lrt"
+          // Run docker-compose on remote host
           sh "docker-compose -f /productos/appian-docker up -d"
           
           
@@ -66,165 +77,6 @@ pipeline {
           }
           }
   
-    stage("Install ADM and FitNesse for Appian") {
-      steps {
-        script {
-          def jenkinsUtils = load "groovy/JenkinsUtils.groovy"
-
-          // Retrieve and setup ADM
-          sh "rm -rf adm f4a"
-          jenkinsUtils.shNoTrace("curl --user ${NEXUS_CREDENTIALS} \"${NEXUS_PROTOCOL}://${NEXUS_URL}/repository/${NEXUS_ALM_REPOSITORY}/${NEXUS_ADM_PATH}\" --output ${ADM_FILENAME}")
-          sh "unzip adm.zip -d adm"
-          sh "unzip adm/appian-adm-import*.zip -d adm/appian-import-client"
-          jenkinsUtils.setProperty("adm/appian-import-client/metrics.properties", "pipelineUsage", "true")
-          sh "unzip adm/appian-adm-versioning*.zip -d adm/appian-version-client"
-          jenkinsUtils.setProperty("adm/appian-version-client/metrics.properties", "pipelineUsage", "true")
-
-          // Retrieve and setup F4A
-          jenkinsUtils.shNoTrace("curl --user ${NEXUS_CREDENTIALS} \"${NEXUS_PROTOCOL}://${NEXUS_URL}/repository/${NEXUS_ALM_REPOSITORY}/${NEXUS_F4A_PATH}\" --output ${F4A_FILENAME}")
-          sh "unzip f4a.zip -d f4a"
-          sh "unzip f4a/FitNesse*.zip -d f4a"
-          jenkinsUtils.setProperty("f4a/FitNesseForAppian/configs/metrics.properties", "pipeline.usage", "true")
-          sh "cp -a devops/f4a/test_suites/. f4a/FitNesseForAppian/FitNesseRoot/FitNesseForAppian/Examples/"
-          sh "cp devops/f4a/users.properties f4a/FitNesseForAppian/configs/users.properties"
-
-          // WebDriver Docker Container setup
-          sh "docker pull selenium/standalone-firefox"
-          jenkinsUtils.setProperty("f4a/FitNesseForAppian/configs/custom.properties", "firefox.host.port", "4444")
-          jenkinsUtils.setProperty("f4a/FitNesseForAppian/configs/custom.properties", "chrome.host.port", "4445")
-          
-          // Retrieve and setup Gatling
-          sh "rm -r /var/tmp/gatling3"
-          sh "mkdir /var/tmp/gatling3"
-          jenkinsUtils.shNoTrace("wget https://repo1.maven.org/maven2/io/gatling/highcharts/gatling-charts-highcharts-bundle/3.0.3/gatling-charts-highcharts-bundle-3.0.3-bundle.zip -P /var/tmp/gatling3")
-          sh "unzip -o /var/tmp/gatling3/gatling-charts-highcharts-bundle-3.0.3-bundle.zip -d /var/tmp/gatling3"
-        }
-      }
-    }
-    stage("Build Application Package from Repo") {
-      steps {
-        script {
-          echo 'Build Application Package from Repo'
-        }
-      }
-    }
-    stage("Deploy to Test") {
-      steps {
-        script {
-            def jenkinsUtils = load "groovy/JenkinsUtils.groovy"
-            
-            // Copy the package that will be imported - the package can also be downloaded from the artifact repository
-            sh "cp appian/applications/${APPLICATIONNAME}/app-package.zip adm/app-package.zip"
-            
-            jenkinsUtils.setProperty("adm/appian-import-client/import-manager.properties", "url", "${APPIAN_SITE_URL}")
-            
-          	//jenkinsUtils.importPackage("import-manager.test.properties", "${APPLICATIONNAME}.test.properties")
-        	echo 'Deploy to Test'
-        }
-      }
-    }
-    
-    stage("Tag Successful Import into Test") {
-      steps {
-        script {
-          echo 'Tag Successful Import into Test'
-        }
-      }
-    }
-    stage('Run Tests') {
-            parallel {
-    stage("Run Integration Tests") {
-      steps {
-        script {
-          echo 'Run Integration Tests'
-        }
-      }
-    }
-    stage("Run Performance Tests") {
-            steps {
-                sh "${GATLING_HOME}/bin/gatling.sh -rf . -rsf devops/perf_testing/ -sf devops/perf_testing/simulations/ -s Home_Page"
-            }
-            post {
-                always {
-                    gatlingArchive()
-                }
-            }
-    }
-    stage("Run Appian Rule Tests") {
-            steps {
-                script {
-                    // Run gradle build to execute the Appian rule tests
-                    sh "gradle build -b devops/rule_testing/build.gradle runApplicationTest -PsiteUrl=${APPIAN_SITE_URL} -PappianUserName=${APPIAN_CREDENTIALS_USR} -PappianPasswordEncoded=${APPIAN_CREDENTIALS_PSW} -PtestResultsPath=${RULE_TEST_REPORTS_PATH}"
-                }
-            }
-            post {
-        		always {
-            		junit 'devops/rule_testing/reports/**/*.xml'
-        }
-    }
-        }
-   }
-   }
-    stage("Deploy to Staging") {
-      steps {
-        script {
-          echo 'Deploy to Staging'
-        }
-      }
-    }
-    stage("Tag Successful Import into Staging") {
-      steps {
-        script {
-          echo 'Tag Successful Import into Staging'
-        }
-      }
-    }
-   stage("Run Acceptance Tests") {
-     steps {
-        script {
-          def jenkinsUtils = load "groovy/JenkinsUtils.groovy"
-          jenkinsUtils.runTestsDockerWithoutCompose("fitnesse-automation.acceptance.properties")
-        }
-      }
-      post {
-        always { 
-          sh script: "docker rm fitnesse-firefox", returnStatus: true
-          dir("f4a/FitNesseForAppian"){ junit "fitnesse-results.xml" }
-        }
-        failure {
-          script {
-            def jenkinsUtils = load "groovy/JenkinsUtils.groovy"
-            archiveArtifacts artifacts: jenkinsUtils.retrieveLogs("fitnesse-automation.acceptance.properties"), fingerprint: true
-          }
-        }
-      }
-    }
-    stage("Create Application Release") {
-      steps {
-        script {
-          echo 'Create Application Release'
-        }
-      }
-    }
-    stage("Promotion Decision") {
-      steps {
-        input "Deploy to Production?"
-      }
-    }
-    stage("Deploy to Production") {
-      steps {
-        script {
-          echo 'Create Application Release'
-        }
-      }
-    }
-    stage("Tag Successful Import into Production") {
-      steps {
-        script {
-          echo 'Tag Successful Import into Production'
-        }
-      }
-    }
     
   }
   
