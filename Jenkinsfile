@@ -37,7 +37,9 @@ pipeline {
         
         // Run docker-compose on remote host
         sshCommand remote: remote, command: "cd /productos/appian-docker; docker-compose up -d"
-        //sshCommand remote: remote, command: "docker-compose up -d"
+        sshCommand remote: remote, command: "do sleep 50"
+        sshCommand remote: remote, command: "while ! curl http://appian-1.appiancorp.com:8080/suite ; do sleep 10 ; done"
+        echo 'Appian is ready'
 	}
        
           
