@@ -34,6 +34,7 @@ pipeline {
     withCredentials([sshUserPrivateKey(credentialsId: 'ssh-key-credentials', keyFileVariable: 'identity', passphraseVariable: '', usernameVariable: 'userName')]) {
     	remote.user = userName
         remote.identityFile = identity
+        
 	}
         sshCommand remote: remote, command: "ls -lrt"
           
