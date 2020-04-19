@@ -36,8 +36,8 @@ pipeline {
         remote.identityFile = identity
         
         // Run docker-compose on remote host
-        sshCommand remote: remote, command: "cd /productos/appian-docker"
-        sshCommand remote: remote, command: "docker-compose up -d"
+        sshCommand remote: remote, command: "cd /productos/appian-docker; docker-compose up -d"
+        //sshCommand remote: remote, command: "docker-compose up -d"
 	}
        
           
