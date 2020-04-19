@@ -35,8 +35,9 @@ pipeline {
     	remote.user = userName
         remote.identityFile = identity
         
+         sshCommand remote: remote, command: "ls -lrt"
 	}
-        sshCommand remote: remote, command: "ls -lrt"
+       
           
           // Run docker-compose on remote host
           sh "docker-compose -f /productos/appian-docker up -d"
