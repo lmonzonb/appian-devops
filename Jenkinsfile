@@ -25,14 +25,16 @@ pipeline {
   	stage("Connect with remote docker host") {
       
         def remote = [:]
-    remote.name = 'appian-1.appiancorp.com'
+    remote.name = 'appian-1'
     remote.host = 'appian-1.appiancorp.com'
-    remote.user = '${REMOTE_DOCKER_HOST_CREDENTIALS_USR}'
-    remote.password = '${REMOTE_DOCKER_HOST_CREDENTIALS_PSW}'
+    //remote.user = '${REMOTE_DOCKER_HOST_CREDENTIALS_USR}'
+    //remote.password = '${REMOTE_DOCKER_HOST_CREDENTIALS_PSW}'
     remote.allowAnyHosts = true
     
-    echo "remote.user - ${REMOTE_DOCKER_HOST_CREDENTIALS_USR}"
-  
+    withCredentials([sshUserPrivateKey(credentialsId: 'ssh-key-credentials', keyFileVariable: 'identity', passphraseVariable: '', usernameVariable: 'userName')]) {
+    	remote.user = userName
+        remote.identityFile = identity
+	}
         sshCommand remote: remote, command: "ls -lrt"
           
           // Run docker-compose on remote host
