@@ -31,7 +31,7 @@ pipeline {
     remote.password = '${REMOTE_DOCKER_HOST_CREDENTIALS_PSW}'
     remote.allowAnyHosts = true
     
-    echo remote.user
+    echo "remote.user - ${REMOTE_DOCKER_HOST_CREDENTIALS_USR}"
   
         sshCommand remote: remote, command: "ls -lrt"
           
