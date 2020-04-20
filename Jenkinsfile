@@ -56,7 +56,7 @@ pipeline {
 
 
     stages {
-    /*
+        /*
         stage("Install ADM and FitNesse for Appian") {
             steps {
                 script {
@@ -98,7 +98,7 @@ pipeline {
         }
 */
 
-        stage('Deploy to Staging') {
+        stage('Deploy to Test') {
             steps {
                 script {
                     stage("Spin Up Appian") {
@@ -118,23 +118,19 @@ pipeline {
                             sshCommand remote: remote, command: "cd /productos/appian-docker; docker-compose up -d"
 
                             sshCommand remote: remote, command: "while ! curl http://appian-1.appiancorp.com:8080/suite ; do sleep 20 ; done"
-                            echo 'Appian is ready'
+                            echo 'Appian Platform on Test Environment is ready'
                         }
                     }
-                    stage("Deploy App to Staging") {
-                        steps {
-                            script {
+                    stage("Deploy App to Test") {
+                        
                                 def jenkinsUtils = load "groovy/JenkinsUtils.groovy"
 
                                 // Copy the package that will be imported - the package can also be downloaded from the artifact repository
-                                //sh "cp appian/applications/${APPLICATIONNAME}/app-package.zip adm/app-package.zip"
+                                sh "cp appian/applications/${APPLICATIONNAME}/app-package.zip adm/app-package.zip"
 
-                                //jenkinsUtils.setProperty("adm/appian-import-client/import-manager.properties", "url", "${APPIAN_SITE_URL}")
-
-                                //jenkinsUtils.importPackage("import-manager.test.properties", "${APPLICATIONNAME}.test.properties")
-                                echo 'Deploy to Staging'
-                            }
-                        }
+                                jenkinsUtils.importPackage("import-manager.test.properties", "${APPLICATIONNAME}.test.properties")
+                                echo 'Deployed Appian application to Test Environment'
+                            
                     }
                 }
             }
@@ -171,39 +167,39 @@ pipeline {
                         }
                     }
                 }
-/*
-                stage("Run Acceptance Tests") {
-                    steps {
-                        script {
-                            def jenkinsUtils = load "groovy/JenkinsUtils.groovy"
-                            jenkinsUtils.runTestsDockerWithoutCompose("fitnesse-automation.acceptance.properties")
-                        }
-                    }
-                    post {
-                        always {
-                            sh script: "docker rm fitnesse-firefox", returnStatus: true
-                            dir("f4a/FitNesseForAppian") {
-                                junit "fitnesse-results.xml"
-                            }
-                        }
-                        failure {
-                            script {
-                                def jenkinsUtils = load "groovy/JenkinsUtils.groovy"
-                                archiveArtifacts artifacts: jenkinsUtils.retrieveLogs("fitnesse-automation.acceptance.properties"), fingerprint: true
-                            }
-                        }
-                    }
-                }
-                */
+                /*
+                                stage("Run Acceptance Tests") {
+                                    steps {
+                                        script {
+                                            def jenkinsUtils = load "groovy/JenkinsUtils.groovy"
+                                            jenkinsUtils.runTestsDockerWithoutCompose("fitnesse-automation.acceptance.properties")
+                                        }
+                                    }
+                                    post {
+                                        always {
+                                            sh script: "docker rm fitnesse-firefox", returnStatus: true
+                                            dir("f4a/FitNesseForAppian") {
+                                                junit "fitnesse-results.xml"
+                                            }
+                                        }
+                                        failure {
+                                            script {
+                                                def jenkinsUtils = load "groovy/JenkinsUtils.groovy"
+                                                archiveArtifacts artifacts: jenkinsUtils.retrieveLogs("fitnesse-automation.acceptance.properties"), fingerprint: true
+                                            }
+                                        }
+                                    }
+                                }
+                                */
             }
             post {
-                        always {
-                            // At the end of this stage, STOP the RUNNING APPIAN environment
-                            sshCommand remote: remote, command: "docker-compose stop"
-                        }
-                    }
-        } 
-        
+                always {
+                    // At the end of this stage, STOP the RUNNING APPIAN environment
+                    sshCommand remote: remote, command: "docker-compose stop"
+                }
+            }
+        }
+
         stage("Create Application Release") {
             steps {
                 script {
