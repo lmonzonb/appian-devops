@@ -56,18 +56,6 @@ pipeline {
 
 
     stages {
-
-        stage("Connect with remote docker host") {
-            steps {
-                script {
-                    // Retrieve and setup ADM
-                    sh "docker-compose -f /productos/appian-docker up -d"
-
-
-                }
-            }
-        }
-
         stage("Install ADM and FitNesse for Appian") {
             steps {
                 script {
