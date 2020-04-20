@@ -196,13 +196,14 @@ pipeline {
                 }
                 */
             }
-        } 
-        post {
+            post {
                         always {
                             // At the end of this stage, STOP the RUNNING APPIAN environment
                             sshCommand remote: remote, command: "docker-compose stop"
                         }
                     }
+        } 
+        
         stage("Create Application Release") {
             steps {
                 script {
