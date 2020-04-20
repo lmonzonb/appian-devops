@@ -56,13 +56,14 @@ pipeline {
 
 
     stages {
+    /*
         stage("Install ADM and FitNesse for Appian") {
             steps {
                 script {
                     def jenkinsUtils = load "groovy/JenkinsUtils.groovy"
 
                     // Retrieve and setup ADM
-                    
+
                     sh "rm -rf adm f4a"
                     jenkinsUtils.shNoTrace("curl --user ${NEXUS_CREDENTIALS} \"${NEXUS_PROTOCOL}://${NEXUS_URL}/repository/${NEXUS_ALM_REPOSITORY}/${NEXUS_ADM_PATH}\" --output ${ADM_FILENAME}")
                     sh "unzip adm.zip -d adm"
@@ -87,40 +88,54 @@ pipeline {
                     // Retrieve and setup Gatling
                     //sh "rm -r /var/tmp/gatling3"
                     //sh "mkdir /var/tmp/gatling3"
-                    
+
                     sh "[ -d /var/tmp/gatling3 ] && {rm -r /var/tmp/gatling3; mkdir /var/tmp/gatling3} || mkdir /var/tmp/gatling3"
-                    
+
                     jenkinsUtils.shNoTrace("wget https://repo1.maven.org/maven2/io/gatling/highcharts/gatling-charts-highcharts-bundle/3.0.3/gatling-charts-highcharts-bundle-3.0.3-bundle.zip -P /var/tmp/gatling3")
                     sh "unzip -o /var/tmp/gatling3/gatling-charts-highcharts-bundle-3.0.3-bundle.zip -d /var/tmp/gatling3"
                 }
             }
         }
-        stage("Build Application Package from Repo") {
+*/
+
+        stage('Deploy to Staging') {
             steps {
                 script {
-                    echo 'Build Application Package from Repo'
-                }
-            }
-        }
-        stage("Deploy to Test") {
-            steps {
-                script {
-                    def jenkinsUtils = load "groovy/JenkinsUtils.groovy"
+                    stage("Spin Up Appian") {
 
-                    // Copy the package that will be imported - the package can also be downloaded from the artifact repository
-                    sh "cp appian/applications/${APPLICATIONNAME}/app-package.zip adm/app-package.zip"
+                        def remote = [: ]
+                        remote.name = 'appian-1'
+                        remote.host = 'appian-1.appiancorp.com'
+                        //remote.user = '${REMOTE_DOCKER_HOST_CREDENTIALS_USR}'
+                        //remote.password = '${REMOTE_DOCKER_HOST_CREDENTIALS_PSW}'
+                        remote.allowAnyHosts = true
 
-                    jenkinsUtils.setProperty("adm/appian-import-client/import-manager.properties", "url", "${APPIAN_SITE_URL}")
+                        withCredentials([sshUserPrivateKey(credentialsId: 'ssh-key-credentials', keyFileVariable: 'identity', passphraseVariable: '', usernameVariable: 'userName')]) {
+                            remote.user = userName
+                            remote.identityFile = identity
 
-                    //jenkinsUtils.importPackage("import-manager.test.properties", "${APPLICATIONNAME}.test.properties")
-                    echo 'Deploy to Test'
-                }
-            }
-        }
-        stage("Tag Successful Import into Test") {
-            steps {
-                script {
-                    echo 'Tag Successful Import into Test'
+                            // Run docker-compose on remote host
+                            sshCommand remote: remote, command: "cd /productos/appian-docker; docker-compose up -d"
+
+                            sshCommand remote: remote, command: "while ! curl http://appian-1.appiancorp.com:8080/suite ; do sleep 20 ; done"
+                            echo 'Appian is ready'
+                        }
+                    }
+                    stage("Deploy App to Staging") {
+                        steps {
+                            script {
+                                def jenkinsUtils = load "groovy/JenkinsUtils.groovy"
+
+                                // Copy the package that will be imported - the package can also be downloaded from the artifact repository
+                                //sh "cp appian/applications/${APPLICATIONNAME}/app-package.zip adm/app-package.zip"
+
+                                //jenkinsUtils.setProperty("adm/appian-import-client/import-manager.properties", "url", "${APPIAN_SITE_URL}")
+
+                                //jenkinsUtils.importPackage("import-manager.test.properties", "${APPLICATIONNAME}.test.properties")
+                                echo 'Deploy to Staging'
+                            }
+                        }
+                    }
                 }
             }
         }
@@ -156,85 +171,38 @@ pipeline {
                         }
                     }
                 }
-            }
-        }
-        stage('Deploy to Staging') {
-            steps {
-                script {
-                    stage("Spin Up Appian") {
-
-                        def remote = [: ]
-                        remote.name = 'appian-1'
-                        remote.host = 'appian-1.appiancorp.com'
-                        //remote.user = '${REMOTE_DOCKER_HOST_CREDENTIALS_USR}'
-                        //remote.password = '${REMOTE_DOCKER_HOST_CREDENTIALS_PSW}'
-                        remote.allowAnyHosts = true
-
-                        withCredentials([sshUserPrivateKey(credentialsId: 'ssh-key-credentials', keyFileVariable: 'identity', passphraseVariable: '', usernameVariable: 'userName')]) {
-                            remote.user = userName
-                            remote.identityFile = identity
-
-                            // Run docker-compose on remote host
-                            sshCommand remote: remote, command: "cd /productos/appian-docker; docker-compose up -d"
-
-                            sshCommand remote: remote, command: "while ! curl http://appian-1.appiancorp.com:8080/suite ; do sleep 20 ; done"
-                            echo 'Appian is ready'
+/*
+                stage("Run Acceptance Tests") {
+                    steps {
+                        script {
+                            def jenkinsUtils = load "groovy/JenkinsUtils.groovy"
+                            jenkinsUtils.runTestsDockerWithoutCompose("fitnesse-automation.acceptance.properties")
                         }
                     }
                     post {
-                        always {                        
-        					// At the end of this stage, STOP the RUNNING APPIAN environment
+                        always {
+                            sh script: "docker rm fitnesse-firefox", returnStatus: true
+                            dir("f4a/FitNesseForAppian") {
+                                junit "fitnesse-results.xml"
+                            }
+                        }
+                        failure {
+                            script {
+                                def jenkinsUtils = load "groovy/JenkinsUtils.groovy"
+                                archiveArtifacts artifacts: jenkinsUtils.retrieveLogs("fitnesse-automation.acceptance.properties"), fingerprint: true
+                            }
+                        }
+                    }
+                }
+                */
+            }
+        } 
+        post {
+                        always {
+                            // At the end of this stage, STOP the RUNNING APPIAN environment
                             sshCommand remote: remote, command: "docker-compose stop"
                         }
                     }
-                    
-        stage("Deploy App to Staging") {
-            steps {
-                script {
-                    def jenkinsUtils = load "groovy/JenkinsUtils.groovy"
-
-                    // Copy the package that will be imported - the package can also be downloaded from the artifact repository
-                    //sh "cp appian/applications/${APPLICATIONNAME}/app-package.zip adm/app-package.zip"
-
-                    //jenkinsUtils.setProperty("adm/appian-import-client/import-manager.properties", "url", "${APPIAN_SITE_URL}")
-
-                    //jenkinsUtils.importPackage("import-manager.test.properties", "${APPLICATIONNAME}.test.properties")
-                    echo 'Deploy to Staging'
-                }
-            }
-        }
-                }
-            }
-        }
-        stage("Tag Successful Import into Staging") {
-            steps {
-                script {
-                    echo 'Tag Successful Import into Staging'
-                }
-            }
-        }
-        stage("Run Acceptance Tests") {
-            steps {
-                script {
-                    def jenkinsUtils = load "groovy/JenkinsUtils.groovy"
-                    jenkinsUtils.runTestsDockerWithoutCompose("fitnesse-automation.acceptance.properties")
-                }
-            }
-            post {
-                always {
-                    sh script: "docker rm fitnesse-firefox", returnStatus: true
-                    dir("f4a/FitNesseForAppian") {
-                        junit "fitnesse-results.xml"
-                    }
-                }
-                failure {
-                    script {
-                        def jenkinsUtils = load "groovy/JenkinsUtils.groovy"
-                        archiveArtifacts artifacts: jenkinsUtils.retrieveLogs("fitnesse-automation.acceptance.properties"), fingerprint: true
-                    }
-                }
-            }
-        }
         stage("Create Application Release") {
             steps {
                 script {
