@@ -127,7 +127,8 @@ pipeline {
 
                                 // Copy the package that will be imported - the package can also be downloaded from the artifact repository
                                 sh "cp appian/applications/${APPLICATIONNAME}/app-package.zip adm/app-package.zip"
-
+                                
+                                jenkinsUtils.setProperty("adm/appian-import-client/import-manager.properties", "url", "${APPIAN_DOCKER_SITE_URL}")
                                 jenkinsUtils.importPackage("import-manager.test.properties", "${APPLICATIONNAME}.test.properties")
                                 echo 'Deployed Appian application to Test Environment'
                             
