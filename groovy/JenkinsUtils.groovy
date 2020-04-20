@@ -43,6 +43,23 @@ void runTestsDockerWithoutCompose(propertyFile) {
   }
 }
 
+void runSpinUpAppianAndDeployWithCompose(propertyFile) {
+  sh "cp devops/f4a/" + propertyFile + " f4a/FitNesseForAppian/fitnesse-automation.properties"
+  sh "docker run -d -p 4444:4444 --name fitnesse-firefox -v /dev/shm:/dev/shm selenium/standalone-firefox &"
+  timeout(2) { //timeout is in minutes
+    waitUntil {
+      def numExpectedContainers = "1"
+      def runningContainers = sh script: "docker ps | grep \"fitnesse-firefox\" | wc -l", returnStdout: true
+      runningContainers = runningContainers.trim()
+      return (runningContainers == numExpectedContainers)
+    }
+  }
+  sleep(10)
+  dir("f4a/FitNesseForAppian") {
+    sh script: "bash ./runFitNesseTest.sh"
+  }
+}
+
 void retrieveLogs(propertyFile) {
   def test = sh script: "cat \"devops/f4a/${propertyFile}\" | grep \"testPath=\" | cut -d'=' -f2", returnStdout: true
   test = test.trim().minus(~"\\?.*")
@@ -66,6 +83,7 @@ void buildPackage(versionPropertyFile) {
 void importPackage(importPropertyFile, customProperties) {
   sh "cp devops/adm/" + importPropertyFile + " adm/appian-import-client/import-manager.properties"
   dir("adm/appian-import-client") {
+  	setProperty("import-manager.properties", "url", "${APPIAN_DOCKER_SITE_URL}")
     setProperty("import-manager.properties", "username", "${APPIAN_CREDENTIALS_USR}")
     setProperty("import-manager.properties", "password", "${APPIAN_CREDENTIALS_PSW}")
     if (fileExists("../../appian/properties/${APPLICATIONNAME}/" + customProperties)) {
