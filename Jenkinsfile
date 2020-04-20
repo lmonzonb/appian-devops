@@ -35,6 +35,7 @@ pipeline {
 
         // URL of the Appian site
         APPIAN_SITE_URL = "http://appian-lab.appiancorp.com:8080/suite"
+        APPIAN_DOCKER_SITE_URL = "http://appian-1.appiancorp.com:8080/suite/"
 
 
         // Appian site credentials
@@ -73,7 +74,7 @@ pipeline {
                     def jenkinsUtils = load "groovy/JenkinsUtils.groovy"
 
                     // Retrieve and setup ADM
-                    /*
+                    
                     sh "rm -rf adm f4a"
                     jenkinsUtils.shNoTrace("curl --user ${NEXUS_CREDENTIALS} \"${NEXUS_PROTOCOL}://${NEXUS_URL}/repository/${NEXUS_ALM_REPOSITORY}/${NEXUS_ADM_PATH}\" --output ${ADM_FILENAME}")
                     sh "unzip adm.zip -d adm"
@@ -94,7 +95,7 @@ pipeline {
                     sh "docker pull selenium/standalone-firefox"
                     jenkinsUtils.setProperty("f4a/FitNesseForAppian/configs/custom.properties", "firefox.host.port", "4444")
                     jenkinsUtils.setProperty("f4a/FitNesseForAppian/configs/custom.properties", "chrome.host.port", "4445")
-*/
+
                     // Retrieve and setup Gatling
                     sh "rm -r /var/tmp/gatling3"
                     sh "mkdir /var/tmp/gatling3"
