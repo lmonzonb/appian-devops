@@ -1,0 +1,31 @@
+version: '2'
+
+networks:
+  devnet:
+    driver: bridge
+
+services:
+ nexus:
+  image: sonatype/nexus3
+  container_name: nexus-local
+  ports:
+    - "8081:8081"
+  networks:
+    - devnet
+  volumes:
+    - "/opt/nexus/:/var/lib/nexus"
+
+ jenkins.docker:
+  image: getintodevops/jenkins-withdocker:lts
+  container_name: jenkins-docker
+  ports:
+    - "8080:8080"
+    - "50000:50000"
+  networks:
+    - devnet
+  volumes:
+    - /var/run/docker.sock:/var/run/docker.sock
+  group_add:
+    - docker
+ 
+ 
