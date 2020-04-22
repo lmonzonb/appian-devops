@@ -166,10 +166,6 @@ class Home_Page extends Simulation {
 			.get("/suite/cors/ping?cv=2"),
             http("request_16")
 			.get("/suite/tempo/ui/sail-client/embeddedApp-14cc662e015d0c7968f1.cache.js"),
-            http("request_17")
-			.post("/suite/tempo/tempoSvc")
-			.headers(headers_17)
-			.body(RawFileBody("test/appiansimulation/0017_request.dat")),
             http("request_18")
 			.get("/suite/rest/a/custombranding/latest/branding")
 			.headers(headers_18),
@@ -226,11 +222,6 @@ class Home_Page extends Simulation {
 			.get("/suite/rest/a/content/latest/iYBrZqjqNxslzRcqg2lNLfr6fJgRkPGCfRIbkX6h2lgoYOT9_gbfA/viewportThumbnail/o;maxWidth=300;maxHeight=600")
 			.headers(headers_14)))
 		.pause(11)
-		.exec(http("request_37")
-			.post("/suite/rest/a/sites/latest/santandermexico/pages/empresas/report")
-			.headers(headers_37)
-			.body(RawFileBody("test/appiansimulation/0037_request.dat")))
-		.pause(5)
 		.exec(http("request_38")
 			.get("/suite/rest/a/applications/latest/legacy/sites/santandermexico/page/gobierno-e-instituciones")
 			.headers(headers_38)
