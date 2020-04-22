@@ -241,5 +241,5 @@ class Home_Page extends Simulation {
 			.get("/suite/rest/a/content/latest/iYBrZqjqNxslzRcqg2lNLfr6fJgRkPGCfRIbkX6h2lgoYOT9_gbfA/viewportThumbnail/o;maxWidth=600;maxHeight=900")
 			.headers(headers_14)))
 
-	setUp(scn.inject(atOnceUsers(3))).protocols(httpProtocol)
+	setUp(scn.inject(rampUsers(10) during(1 minutes))).protocols(httpProtocol)
 }
