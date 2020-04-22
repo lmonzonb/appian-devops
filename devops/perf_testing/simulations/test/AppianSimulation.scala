@@ -1,9 +1,12 @@
+package test
+
 import scala.concurrent.duration._
+
 import io.gatling.core.Predef._
 import io.gatling.http.Predef._
 import io.gatling.jdbc.Predef._
 
-class Home_Page extends Simulation {
+class AppianSimulation extends Simulation {
 	val httpProtocol = http
 		.baseUrl("http://appian-1.appiancorp.com:8080")
 		.inferHtmlResources()
