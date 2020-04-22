@@ -147,7 +147,7 @@ pipeline {
                 }
                 stage("Run Performance Tests") {
                     steps {
-                        sh "${GATLING_HOME}/bin/gatling.sh -rf . -rsf devops/perf_testing/ -sf devops/perf_testing/simulations/ -s Home_Page"
+                        sh "${GATLING_HOME}/bin/gatling.sh -rf . -rsf devops/perf_testing/ -sf devops/perf_testing/simulations/ -s test.AppianSimulation"
                     }
                     post {
                         always {
@@ -196,7 +196,7 @@ pipeline {
             post {
                 always {
                     // At the end of this stage, STOP the RUNNING APPIAN environment
-                    sshCommand remote: remote, command: "docker-compose stop"
+                    //sshCommand remote: remote, command: "docker-compose stop"
                 }
             }
         }
