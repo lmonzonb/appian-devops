@@ -138,6 +138,7 @@ pipeline {
         }
         stage('Run Tests') {
             parallel {
+            /*
                 stage("Run Integration Tests") {
                     steps {
                         script {
@@ -168,6 +169,7 @@ pipeline {
                         }
                     }
                 }
+                */
                 
                                 stage("Run Acceptance Tests") {
                                     steps {
