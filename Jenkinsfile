@@ -157,8 +157,8 @@ pipeline {
       }
      }
     }
-    */
-    /*
+    
+    
     stage("Run Appian Rule Tests") {
      steps {
       script {
