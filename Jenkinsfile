@@ -180,7 +180,7 @@ pipeline {
      }
      post {
       always {
-       sh script: "docker rm fitnesse-firefox", returnStatus: true
+       //sh script: "docker rm fitnesse-firefox", returnStatus: true
        dir("f4a/FitNesseForAppian") {
         junit "fitnesse-results.xml"
        }
