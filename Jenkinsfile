@@ -146,6 +146,7 @@ pipeline {
       }
      }
     }
+    /*
     stage("Run Performance Tests") {
      steps {
       sh "${GATLING_HOME}/bin/gatling.sh -rf . -rsf devops/perf_testing/ -sf devops/perf_testing/simulations/ -s test.AppianSimulation"
@@ -156,6 +157,7 @@ pipeline {
       }
      }
     }
+    */
     stage("Run Appian Rule Tests") {
      steps {
       script {
