@@ -157,6 +157,7 @@ pipeline {
       }
      }
     }
+     */
     stage("Run Appian Rule Tests") {
      steps {
       script {
@@ -170,7 +171,7 @@ pipeline {
       }
      }
     }
-    */
+   
     stage("Run Acceptance Tests") {
      steps {
       script {
