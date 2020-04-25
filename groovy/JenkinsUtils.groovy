@@ -29,7 +29,7 @@ void runTestsDocker(propertyFile) {
 void runTestsDockerWithoutCompose(propertyFile, suiteFolder) {
   sh "cp devops/f4a/" + propertyFile + " f4a/FitNesseForAppian/fitnesse-automation.properties"
   sh "cp -r devops/f4a/test_suites/" + suiteFolder + " f4a/FitNesseForAppian/FitNesseRoot/FitNesseForAppian/Examples/" + suiteFolder
-  sh "ls -lrt f4a/FitNesseForAppian/FitNesseRoot/FitNesseForAppian/Examples/" + suiteFolder
+  setProperty("f4a/FitNesseForAppian/configs/users.properties", "${APPIAN_CREDENTIALS_USR}", "${APPIAN_CREDENTIALS_PSW}")
   
   sh "docker run -d -p 4444:4444 --name fitnesse-firefox -v /dev/shm:/dev/shm selenium/standalone-firefox &"
   timeout(2) { //timeout is in minutes
@@ -99,7 +99,6 @@ void importPackage(importPropertyFile, customProperties) {
 
 void setProperty(filePath, property, propertyValue) {
   shNoTrace("sed -i -e 's|.\\?${property}=.*|${property}=${propertyValue}|' ${filePath}")
-  sh "sed -i -e 's|.\\?${property}=.*|${property}=${propertyValue}|' ${filePath}"
 }
 
 def shNoTrace(cmd) {

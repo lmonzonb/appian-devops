@@ -179,7 +179,6 @@ pipeline {
      steps {
       script {
        def jenkinsUtils = load "groovy/JenkinsUtils.groovy"
-       jenkinsUtils.setProperty("devops/f4a/users.properties", "${APPIAN_CREDENTIALS_USR}", "${APPIAN_CREDENTIALS_PSW}")
        jenkinsUtils.runTestsDockerWithoutCompose("fitnesse-automation.acceptance.properties", "SantanderDemoAcceptanceTest")
       }
      }
