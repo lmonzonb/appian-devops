@@ -28,6 +28,7 @@ void runTestsDocker(propertyFile) {
 
 void runTestsDockerWithoutCompose(propertyFile, suiteFolder) {
   sh "cp devops/f4a/" + propertyFile + " f4a/FitNesseForAppian/fitnesse-automation.properties"
+  sh "cp devops/f4a/users.properties f4a/FitNesseForAppian/configs/users.properties"
   sh "cp -r devops/f4a/test_suites/" + suiteFolder + " f4a/FitNesseForAppian/FitNesseRoot/FitNesseForAppian/Examples/" + suiteFolder
   setProperty("f4a/FitNesseForAppian/configs/users.properties", "${APPIAN_CREDENTIALS_USR}", "${APPIAN_CREDENTIALS_PSW}")
   
