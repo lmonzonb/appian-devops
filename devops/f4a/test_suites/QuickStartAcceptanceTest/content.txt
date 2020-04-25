@@ -9,10 +9,10 @@
 
 !| script             |com.appiancorp.ps.automatedtest.fixture.TempoFixture|
 |setup with           |FIREFOX                   |browser                  |
-|set appian url to    |APPIAN_URL                                          |
-|set appian version to|APPIAN_VERSION                                      |
-|set appian locale to |APPIAN_LOCALE                                       |
-|login with username  |APPIAN_USERNAME                                     |
+|set appian url to    |http://appian-1.appiancorp.com:8080/suite/                                          |
+|set appian version to|20.1                                      |
+|set appian locale to |en_US                                       |
+|login with username  |admin.user                                     |
 ***!
 !*** Click on all the tabs
 

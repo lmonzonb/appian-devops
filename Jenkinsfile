@@ -61,9 +61,12 @@ pipeline {
             steps {
                 script {
                     def jenkinsUtils = load "groovy/JenkinsUtils.groovy"
+                    
+                    // Install zip and unzip
+                    sh "apt-get update"
+                    sh "apt-get install zip unzip"
 
                     // Retrieve and setup ADM
-
                     sh "rm -rf adm f4a"
                     jenkinsUtils.shNoTrace("curl --user ${NEXUS_CREDENTIALS} \"${NEXUS_PROTOCOL}://${NEXUS_URL}/repository/${NEXUS_ALM_REPOSITORY}/${NEXUS_ADM_PATH}\" --output ${ADM_FILENAME}")
                     sh "unzip adm.zip -d adm"
@@ -176,6 +179,7 @@ pipeline {
      steps {
       script {
        def jenkinsUtils = load "groovy/JenkinsUtils.groovy"
+       jenkinsUtils.setProperty("devops/f4a/users.properties", "${APPIAN_CREDENTIALS_USR}", "${APPIAN_CREDENTIALS_PSW}")
        jenkinsUtils.runTestsDockerWithoutCompose("fitnesse-automation.acceptance.properties")
       }
      }
