@@ -26,8 +26,9 @@ void runTestsDocker(propertyFile) {
   }
 }
 
-void runTestsDockerWithoutCompose(propertyFile) {
+void runTestsDockerWithoutCompose(propertyFile, suiteFolder) {
   sh "cp devops/f4a/" + propertyFile + " f4a/FitNesseForAppian/fitnesse-automation.properties"
+  sh "cp devops/f4a/test_suites/" + suiteFolder + " f4a/FitNesseForAppian/FitNesseRoot/FitNesseForAppian/Examples/" + suiteFolder
   sh "docker run -d -p 4444:4444 --name fitnesse-firefox -v /dev/shm:/dev/shm selenium/standalone-firefox &"
   timeout(2) { //timeout is in minutes
     waitUntil {
