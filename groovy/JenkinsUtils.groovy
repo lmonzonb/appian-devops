@@ -96,6 +96,7 @@ void importPackage(importPropertyFile, customProperties) {
 
 void setProperty(filePath, property, propertyValue) {
   shNoTrace("sed -i -e 's|.\\?${property}=.*|${property}=${propertyValue}|' ${filePath}")
+  sh "sed -i -e 's|.\\?${property}=.*|${property}=${propertyValue}|' ${filePath}"
 }
 
 def shNoTrace(cmd) {
