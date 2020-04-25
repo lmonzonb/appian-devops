@@ -31,6 +31,7 @@ void runTestsDockerWithoutCompose(propertyFile, suiteFolder) {
   sh "cp devops/f4a/users.properties f4a/FitNesseForAppian/configs/users.properties"
   sh "cp -r devops/f4a/test_suites/" + suiteFolder + " f4a/FitNesseForAppian/FitNesseRoot/FitNesseForAppian/Examples/" + suiteFolder
   setProperty("f4a/FitNesseForAppian/configs/users.properties", "${APPIAN_CREDENTIALS_USR}", "${APPIAN_CREDENTIALS_PSW}")
+  setProperty("f4a/FitNesseForAppian/configs/custom.properties", "firefox.host.ip", "fitnesse-firefox")  
   
   sh "docker run -d -p 4444:4444 --name fitnesse-firefox -v /dev/shm:/dev/shm selenium/standalone-firefox &"
   timeout(2) { //timeout is in minutes
@@ -42,6 +43,8 @@ void runTestsDockerWithoutCompose(propertyFile, suiteFolder) {
     }
   }
   sleep(10)
+  sh "docker network connect localNetwork fitnesse-firefox"
+  
   dir("f4a/FitNesseForAppian") {
     sh script: "bash ./runFitNesseTest.sh"
   }
