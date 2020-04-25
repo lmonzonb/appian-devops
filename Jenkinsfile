@@ -90,8 +90,8 @@ pipeline {
                     jenkinsUtils.setProperty("f4a/FitNesseForAppian/configs/custom.properties", "chrome.host.port", "4445")
 
                     // Retrieve and setup Gatling
-                    //sh "rm -r /var/tmp/gatling3"
-                    //sh "mkdir /var/tmp/gatling3"
+                    sh "rm -rf /var/tmp/gatling3"
+                    sh "mkdir /var/tmp/gatling3"
 
                     sh "[ -d /var/tmp/gatling3 ] && {rm -r /var/tmp/gatling3; mkdir /var/tmp/gatling3} || mkdir /var/tmp/gatling3"
 
