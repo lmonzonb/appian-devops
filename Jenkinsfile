@@ -56,6 +56,7 @@ pipeline {
 
 
  stages {
+  /*
         stage("Install ADM and FitNesse for Appian") {
             steps {
                 script {
@@ -99,6 +100,7 @@ pipeline {
                 }
             }
         }
+*/
 
   stage('Deploy to Test') {
    steps {
