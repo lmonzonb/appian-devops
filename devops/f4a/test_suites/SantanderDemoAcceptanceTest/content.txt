@@ -8,7 +8,7 @@
 !*** Initialization and Login to Tempo
 
 !| script             |com.appiancorp.ps.automatedtest.fixture.TempoFixture|
-|setup with           |CHROME                   |browser                  |
+|setup with           |FIREFOX                   |browser                  |
 |set appian url to    |http://appian-1.appiancorp.com:8080/suite/                                          |
 |set appian version to|20.1                                      |
 |set appian locale to |en_US                                       |

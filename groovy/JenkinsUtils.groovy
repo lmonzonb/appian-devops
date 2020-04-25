@@ -32,11 +32,11 @@ void runTestsDockerWithoutCompose(propertyFile, suiteFolder) {
   sh "cp -r devops/f4a/test_suites/" + suiteFolder + " f4a/FitNesseForAppian/FitNesseRoot/FitNesseForAppian/Examples/" + suiteFolder
   setProperty("f4a/FitNesseForAppian/configs/users.properties", "${APPIAN_CREDENTIALS_USR}", "${APPIAN_CREDENTIALS_PSW}")
   
-  sh "docker run -d -p 4444:4444 --name fitnesse-chrome -v /dev/shm:/dev/shm selenium/standalone-chrome-debug &"
+  sh "docker run -d -p 4444:4444 --name fitnesse-firefox -v /dev/shm:/dev/shm selenium/standalone-chrome-debug &"
   timeout(2) { //timeout is in minutes
     waitUntil {
       def numExpectedContainers = "1"
-      def runningContainers = sh script: "docker ps | grep \"fitnesse-chrome\" | wc -l", returnStdout: true
+      def runningContainers = sh script: "docker ps | grep \"fitnesse-firefox\" | wc -l", returnStdout: true
       runningContainers = runningContainers.trim()
       return (runningContainers == numExpectedContainers)
     }
