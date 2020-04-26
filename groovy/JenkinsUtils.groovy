@@ -45,7 +45,7 @@ void runTestsDockerWithoutCompose(propertyFile, suiteFolder) {
   }
   sleep(10)
   sh "docker network connect localNetwork fitnesse-chrome-vnc"
-  sleep(10)
+  sleep(30)
   
   dir("f4a/FitNesseForAppian") {
     sh script: "bash ./runFitNesseTest.sh"
