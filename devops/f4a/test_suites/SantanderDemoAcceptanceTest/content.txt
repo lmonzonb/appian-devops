@@ -16,7 +16,7 @@
 ***!
 
 !| script             |
-|navigate to site|http://appian-1.appiancorp.com:8080/suite/sites/santandersite   |
+|navigate to site|http://appian-1.appiancorp.com:8080/suite/sites/santandermexico  |
 ***!
 
 !*** Log out and tear down
