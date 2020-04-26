@@ -7,20 +7,12 @@
 ----
 !*** Initialization and Login to Tempo
 
-!| script             |com.appiancorp.ps.automatedtest.fixture.TempoFixture|
+!| script             |com.appiancorp.ps.automatedtest.fixture.SitesFixture|
 |setup with           |REMOTE_CHROME                   |browser                  |
 |set appian url to    |http://appian-1.appiancorp.com:8080/suite/                                          |
 |set appian version to|20.1                                      |
 |set appian locale to |en_US                                       |
 |login with username  |selenium.user                                     |
-***!
-
-!| script             |
-|click on menu|News   |
-|click on menu|Tasks  |
-|click on menu|Records|
-|click on menu|Reports|
-|click on menu|Actions|
 ***!
 
 !| script             |
