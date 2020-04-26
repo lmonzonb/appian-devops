@@ -40,6 +40,9 @@ pipeline {
 
   // Appian site credentials
   APPIAN_CREDENTIALS = credentials('appian-credentials')
+  
+  // Appian site credentials - UI Tests
+  APPIAN_UI_CREDENTIALS = credentials('appian-ui-credentials')
 
   SITEPASSWORD_ENCODED = "pass"
 

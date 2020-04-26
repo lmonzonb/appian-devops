@@ -30,20 +30,20 @@ void runTestsDockerWithoutCompose(propertyFile, suiteFolder) {
   sh "cp devops/f4a/" + propertyFile + " f4a/FitNesseForAppian/fitnesse-automation.properties"
   sh "cp devops/f4a/users.properties f4a/FitNesseForAppian/configs/users.properties"
   sh "cp -r devops/f4a/test_suites/" + suiteFolder + " f4a/FitNesseForAppian/FitNesseRoot/FitNesseForAppian/Examples/" + suiteFolder
-  setProperty("f4a/FitNesseForAppian/configs/users.properties", "${APPIAN_CREDENTIALS_USR}", "${APPIAN_CREDENTIALS_PSW}")
-  setProperty("f4a/FitNesseForAppian/configs/custom.properties", "firefox.host.ip", "fitnesse-firefox")  
+  setProperty("f4a/FitNesseForAppian/configs/users.properties", "${APPIAN_UI_CREDENTIALS_USR}", "${APPIAN_UI_CREDENTIALS_PSW}")
+  setProperty("f4a/FitNesseForAppian/configs/custom.properties", "chrome.host.ip", "fitnesse-chrome")  
   
-  sh "docker run -d -p 4444:4444 --name fitnesse-firefox -v /dev/shm:/dev/shm selenium/standalone-firefox &"
+  sh "docker run -d -p 4444:4444 -p 35900:5900 --name fitnesse-chrome-vnc -v /dev/shm:/dev/shm selenium/standalone-chrome-debug &"
   timeout(2) { //timeout is in minutes
     waitUntil {
       def numExpectedContainers = "1"
-      def runningContainers = sh script: "docker ps | grep \"fitnesse-firefox\" | wc -l", returnStdout: true
+      def runningContainers = sh script: "docker ps | grep \"fitnesse-chrome\" | wc -l", returnStdout: true
       runningContainers = runningContainers.trim()
       return (runningContainers == numExpectedContainers)
     }
   }
   sleep(10)
-  sh "docker network connect localNetwork fitnesse-firefox"
+  sh "docker network connect localNetwork fitnesse-chrome"
   
   dir("f4a/FitNesseForAppian") {
     sh script: "bash ./runFitNesseTest.sh"
