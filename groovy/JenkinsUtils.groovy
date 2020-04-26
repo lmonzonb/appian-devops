@@ -32,8 +32,9 @@ void runTestsDockerWithoutCompose(propertyFile, suiteFolder) {
   sh "cp -r devops/f4a/test_suites/" + suiteFolder + " f4a/FitNesseForAppian/FitNesseRoot/FitNesseForAppian/Examples/" + suiteFolder
   setProperty("f4a/FitNesseForAppian/configs/users.properties", "${APPIAN_UI_CREDENTIALS_USR}", "${APPIAN_UI_CREDENTIALS_PSW}")
   setProperty("f4a/FitNesseForAppian/configs/custom.properties", "chrome.host.ip", "fitnesse-chrome-vnc")  
+  setProperty("f4a/FitNesseForAppian/configs/custom.properties", "chrome.host.port", "4444")  
   
-  sh "docker run -d -p 4445:4444 -p 35900:5900 --name fitnesse-chrome-vnc -v /dev/shm:/dev/shm selenium/standalone-chrome-debug &"
+  sh "docker run -d -p 4444:4444 -p 35900:5900 --name fitnesse-chrome-vnc -v /dev/shm:/dev/shm selenium/standalone-chrome-debug &"
   timeout(2) { //timeout is in minutes
     waitUntil {
       def numExpectedContainers = "1"
@@ -44,6 +45,7 @@ void runTestsDockerWithoutCompose(propertyFile, suiteFolder) {
   }
   sleep(10)
   sh "docker network connect localNetwork fitnesse-chrome-vnc"
+  sleep(10)
   
   dir("f4a/FitNesseForAppian") {
     sh script: "bash ./runFitNesseTest.sh"
