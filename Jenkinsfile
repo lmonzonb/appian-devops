@@ -179,7 +179,7 @@ pipeline {
      steps {
       script {
        def jenkinsUtils = load "groovy/JenkinsUtils.groovy"
-       jenkinsUtils.runTestsDockerWithoutCompose("fitnesse-automation.acceptance.properties", "SantanderDemoAcceptanceTest")
+       jenkinsUtils.runTestsDockerWithWindowsHost("fitnesse-automation.acceptance.properties", "SantanderDemoAcceptanceTest")
       }
      }
      post {

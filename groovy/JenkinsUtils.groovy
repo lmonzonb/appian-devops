@@ -50,6 +50,18 @@ void runTestsDockerWithoutCompose(propertyFile, suiteFolder) {
   }
 }
 
+void runTestsDockerWithWindowsHost(propertyFile, suiteFolder) {
+  sh "cp devops/f4a/" + propertyFile + " f4a/FitNesseForAppian/fitnesse-automation.properties"
+  sh "cp devops/f4a/users.properties f4a/FitNesseForAppian/configs/users.properties"
+  sh "cp -r devops/f4a/test_suites/" + suiteFolder + " f4a/FitNesseForAppian/FitNesseRoot/FitNesseForAppian/Examples/" + suiteFolder
+  setProperty("f4a/FitNesseForAppian/configs/users.properties", "${APPIAN_CREDENTIALS_USR}", "${APPIAN_CREDENTIALS_PSW}")
+  setProperty("f4a/FitNesseForAppian/configs/custom.properties", "firefox.host.ip", "host.docker.internal")  
+   
+  dir("f4a/FitNesseForAppian") {
+    sh script: "bash ./runFitNesseTest.sh"
+  }
+}
+
 void runSpinUpAppianAndDeployWithCompose(propertyFile) {
   sh "cp devops/f4a/" + propertyFile + " f4a/FitNesseForAppian/fitnesse-automation.properties"
   sh "docker run -d -p 4444:4444 --name fitnesse-firefox -v /dev/shm:/dev/shm selenium/standalone-firefox &"
