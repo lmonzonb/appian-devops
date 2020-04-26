@@ -14,15 +14,7 @@
 |set appian locale to |en_US                                       |
 |login with username  |admin.user                                     |
 ***!
-!*** Click on all the tabs
 
-!| script             |
-|click on menu|News   |
-|click on menu|Tasks  |
-|click on menu|Records|
-|click on menu|Reports|
-|click on menu|Actions|
-***!
 !*** Log out and tear down
 
 !| script |
