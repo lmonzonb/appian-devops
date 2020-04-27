@@ -168,7 +168,7 @@ pipeline {
       }
      }
     }
-   /*
+  
     stage("Run Acceptance Tests") {
      steps {
       script {
@@ -191,7 +191,7 @@ pipeline {
       }
      }
     }
-   */
+   
    //post {
    //always {
    // At the end of this stage, STOP the RUNNING APPIAN environment
