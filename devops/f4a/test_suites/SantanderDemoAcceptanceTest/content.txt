@@ -15,10 +15,9 @@
 |login with username  |selenium.user                                     |
 ***!
 
+!*** Click on all the tabs
 !| script             |
-|wait for SECONDS|10  |
 |navigate to site|santandermexico  |
-|wait for SECONDS|20  |
 ***!
 
 !*** Log out and tear down
