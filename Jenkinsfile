@@ -60,7 +60,7 @@ pipeline {
 
  stages {
  
-        stage("Install ADM and FitNesse for Appian") {
+        stage("Install ADM and F4A") {
             steps {
                 script {
                     def jenkinsUtils = load "groovy/JenkinsUtils.groovy"
@@ -105,7 +105,7 @@ pipeline {
         }
 
 
-  stage('Deploy to Test') {
+  stage('Deploy to Appian in Docker') {
    steps {
     script {
      stage("Spin Up Appian") {
@@ -128,14 +128,14 @@ pipeline {
        echo 'Appian Platform on Test Environment is ready'
       }
      }
-     stage("Deploy App to Test") {
+     stage("Deploy App") {
 
-      //def jenkinsUtils = load "groovy/JenkinsUtils.groovy"
+      def jenkinsUtils = load "groovy/JenkinsUtils.groovy"
 
       // Copy the package that will be imported - the package can also be downloaded from the artifact repository
-      //sh "cp appian/applications/${APPLICATIONNAME}/app-package.zip adm/app-package.zip"
+      sh "cp appian/applications/${APPLICATIONNAME}/app-package.zip adm/app-package.zip"
 
-      //jenkinsUtils.importPackage("import-manager.test.properties", "${APPLICATIONNAME}.test.properties")
+      jenkinsUtils.importPackage("import-manager.test.properties", "${APPLICATIONNAME}.test.properties")
       echo 'Deployed Appian application to Test Environment'
 
      }
@@ -143,19 +143,7 @@ pipeline {
    }
   }
 
-   
-    stage("Run Performance Tests") {
-     steps {
-      sh "${GATLING_HOME}/bin/gatling.sh -rf . -rsf devops/perf_testing/ -sf devops/perf_testing/simulations/ -s test.AppianSimulation"
-     }
-     post {
-      always {
-       gatlingArchive()
-      }
-     }
-    }
-   
-    stage("Run Appian Rule Tests") {
+   stage("Run Appian Rule Tests") {
      steps {
       script {
        // Run gradle build to execute the Appian rule tests
@@ -168,7 +156,18 @@ pipeline {
       }
      }
     }
-  
+    
+    stage("Run Performance Tests") {
+     steps {
+      sh "${GATLING_HOME}/bin/gatling.sh -rf . -rsf devops/perf_testing/ -sf devops/perf_testing/simulations/ -s test.AppianSimulation"
+     }
+     post {
+      always {
+       gatlingArchive()
+      }
+     }
+    }
+   
     stage("Run Acceptance Tests") {
      steps {
       script {
